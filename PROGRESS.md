@@ -27,11 +27,11 @@ Phase status: `done`
 
 ## M1 — Project Setup & Emulator Scaffold
 
-Phase status: `todo`
+Phase status: `in progress`
 
 Done when: `npm run dev` and `firebase emulators:start` both run. No product UI required.
 
-- [ ] **M1-01** Scaffold Vite + React + TypeScript app in this repo
+- [x] **M1-01** Scaffold Vite + React + TypeScript app in this repo
 - [ ] **M1-02** Add Tailwind CSS and a blank app shell
 - [ ] **M1-03** Add Firebase SDK, `firebase.json`, and placeholder config
 - [ ] **M1-04** Enable Auth, Firestore, Storage, and Functions emulators
@@ -136,3 +136,5 @@ Phase status: `locked` (do not start until M6 is `done`)
 | Date | Task | Change |
 | --- | --- | --- |
 | 2026-10-03 | M0-06 | Progress board, skill, and hooks created. Next work is M1-01. |
+| 2026-10-03 | M1-01 | started |
+| 2026-10-03 | M1-01 | done — Vite + React + TypeScript scaffold; `npm run build` succeeds |
