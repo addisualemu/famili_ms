@@ -5,7 +5,7 @@ Source of work for every agent turn. Do not implement anything that is not a tas
 ## Current
 
 - Phase: `M2`
-- Active: `M2-05`
+- Active: `M2-07`
 - Updated: `2026-10-03`
 - Plan: Spark only. Do not use Cloud Functions or any other Blaze-only product.
 
@@ -52,9 +52,9 @@ Done when: parent can sign in, switch to a child profile, and lock/unlock senior
 - [x] **M2-02** Wire Firebase Auth and parent custom claims (`role`, `familyId`)
 - [x] **M2-03** Seed or create family + members (parent, Leo junior, Maya senior)
 - [x] **M2-04** Build shared-tablet avatar profile switcher
-- [~] **M2-05** Add 4-digit PIN lock for senior and parent (salted hash on member)
-- [ ] **M2-06** Persist active member in client state
-- [ ] **M2-07** Browser-verify login, switch, and PIN lock
+- [x] **M2-05** Add 4-digit PIN lock for senior and parent (salted hash on member)
+- [x] **M2-06** Persist active member in client state
+- [~] **M2-07** Browser-verify login, switch, and PIN lock
 - [x] **M2-08** Add Google sign-in on the parent login view
 - [x] **M2-09** Drop the Blaze-only claims callable; read parent claims from the ID token
 - [x] **M2-10** Show the seeded family members on the signed-in card
@@ -174,3 +174,10 @@ Phase status: `locked` (do not start until M6 is `done`)
 | 2026-10-03 | M2-04 | started |
 | 2026-10-03 | M2-04 | done — avatar profile switcher for parent, Leo, and Maya |
 | 2026-10-03 | M2-05 | started |
+| 2026-10-03 | M2-05 | done — senior and parent PIN is a salted hash on the member |
+| 2026-10-03 | M2-06 | started |
+| 2026-10-03 | M2-06 | done — active member id is stored on this device |
+| 2026-10-03 | M2-07 | started |
+| 2026-10-03 | M2-07 | blocked — login form reaches Firebase; profile switch and PIN need a completed Google sign-in in this browser |
+| 2026-10-03 | M2-07 | resumed — retry sign-in, profile switch, and PIN |
+| 2026-10-03 | M2-07 | waiting — Google account window is open; switch and PIN still need a signed-in parent |

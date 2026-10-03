@@ -1,10 +1,11 @@
 import { signOut } from 'firebase/auth'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ParentLogin } from './auth/ParentLogin.tsx'
 import { useAuthUser } from './auth/useAuthUser.ts'
 import { auth } from './lib/firebase.ts'
 import { useFamily } from './family/useFamily.ts'
+import { readActiveMember, writeActiveMember } from './profile/activeMember.ts'
 import { ActiveProfile } from './profile/ActiveProfile.tsx'
 import { PinLock } from './profile/PinLock.tsx'
 import { hashPin, requiresPin, verifyPin } from './profile/pinHash.ts'
@@ -21,6 +22,16 @@ function AuthGate() {
   const [pinBusy, setPinBusy] = useState(false)
   const [signingOut, setSigningOut] = useState(false)
   const [signOutError, setSignOutError] = useState<string | null>(null)
+  const restoredMember = useRef(false)
+
+  useEffect(() => {
+    if (!claims || !family.ready || family.members.length === 0 || restoredMember.current) return
+    restoredMember.current = true
+    const saved = readActiveMember(claims.familyId)
+    if (saved && family.members.some((member) => member.id === saved)) {
+      setActiveId(saved)
+    }
+  }, [claims, family.ready, family.members])
 
   if (!ready || (claims && !family.ready)) {
     return <main aria-busy="true" className="min-h-svh bg-cream" />
@@ -43,6 +54,7 @@ function AuthGate() {
       return
     }
     setActiveId(memberId)
+    if (claims) writeActiveMember(claims.familyId, memberId)
   }
 
   async function handlePin(pin: string) {
@@ -58,6 +70,7 @@ function AuthGate() {
       }
       setActiveId(pending.id)
       setPendingId(null)
+      writeActiveMember(claims.familyId, pending.id)
     } catch {
       setPinError('Could not check the PIN. Try again.')
     } finally {
@@ -69,6 +82,7 @@ function AuthGate() {
     setSignOutError(null)
     setSigningOut(true)
     try {
+      if (claims) writeActiveMember(claims.familyId, null)
       await signOut(auth)
       setActiveId(null)
       setPendingId(null)
@@ -117,7 +131,10 @@ function AuthGate() {
       <ActiveProfile
         member={active}
         onSignOut={handleSignOut}
-        onSwitch={() => setActiveId(null)}
+        onSwitch={() => {
+          if (claims) writeActiveMember(claims.familyId, null)
+          setActiveId(null)
+        }}
         signingOut={signingOut}
       />
       {sessionError ? <SessionError message={sessionError} /> : null}
