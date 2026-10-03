@@ -5,7 +5,7 @@ description: Kids Life OS Firebase architecture — Auth profile switcher, Fires
 
 # Kids Portal Firebase
 
-Stack: Firebase Auth + Firestore + Storage + Cloud Functions (`nodejs20`) + Hosting. Develop against emulators.
+Stack: Firebase Auth + Firestore + Storage + Cloud Functions (`nodejs20`) + Hosting. Use the Firebase project from env. Do not use local emulators.
 
 Canonical field shapes: [schema.md](schema.md). Architecture prose: `Technical_architectur.md`.
 
@@ -81,6 +81,6 @@ After any rules change, run the Firebase security-rules auditor skill if availab
 
 ## Emulators and hosting
 
-- `firebase emulators:start` for Auth, Firestore, Storage, Functions.
+- Do not start Firebase emulators or point the web app at emulator hosts.
 - Hosting is an SPA: Vite `out` or `dist` + rewrite `**` → `/index.html`. Point `firebase.json` hosting `public` at the real Vite output dir.
-- Point the web app at emulator hosts in development. Never commit service-account JSON or production keys.
+- Read the web config from `VITE_FIREBASE_*` env vars. Never commit service-account JSON or production keys.

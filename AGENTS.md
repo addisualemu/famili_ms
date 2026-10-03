@@ -42,7 +42,7 @@ Project skills in `.cursor/skills/` hold the working rules. Load the matching sk
 - Vite + React + TypeScript + Tailwind CSS
 - PWA (installable on shared tablets)
 - Firebase: Auth, Firestore, Storage, Cloud Functions (`nodejs20`), Hosting
-- Local emulators for Auth, Firestore, Storage, Functions
+- Firebase project config from env. Do not use the local Firebase emulators.
 - Ledger and redemptions only through callable Cloud Functions
 
 Do not switch to Next.js, a second database, or client-side balance writes.

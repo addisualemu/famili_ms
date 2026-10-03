@@ -4,7 +4,7 @@ Source of work for every agent turn. Do not implement anything that is not a tas
 
 ## Current
 
-- Phase: `M1`
+- Phase: `M2`
 - Active: `none`
 - Updated: `2026-10-03`
 
@@ -25,19 +25,19 @@ Phase status: `done`
 
 ---
 
-## M1 — Project Setup & Emulator Scaffold
+## M1 — Project Setup
 
-Phase status: `in progress`
+Phase status: `done`
 
-Done when: `npm run dev` and `firebase emulators:start` both run. No product UI required.
+Done when: `npm run dev` runs. No product UI. No Firebase emulators.
 
 - [x] **M1-01** Scaffold Vite + React + TypeScript app in this repo
-- [ ] **M1-02** Add Tailwind CSS and a blank app shell
-- [ ] **M1-03** Add Firebase SDK, `firebase.json`, and placeholder config
-- [ ] **M1-04** Enable Auth, Firestore, Storage, and Functions emulators
-- [ ] **M1-05** Add `.env.example` and env wiring (project id + emulator flags)
-- [ ] **M1-06** Add basic client routing (empty routes are fine)
-- [ ] **M1-07** Verify dev server and emulators start locally
+- [x] **M1-02** Add Tailwind CSS and a blank app shell
+- [x] **M1-03** Add Firebase SDK, `firebase.json`, and placeholder config
+- [-] **M1-04** Enable Auth, Firestore, Storage, and Functions emulators
+- [x] **M1-05** Add `.env.example` and env wiring (project id)
+- [x] **M1-06** Add basic client routing (empty routes are fine)
+- [x] **M1-07** Verify the dev server starts locally
 
 ---
 
@@ -138,3 +138,12 @@ Phase status: `locked` (do not start until M6 is `done`)
 | 2026-10-03 | M0-06 | Progress board, skill, and hooks created. Next work is M1-01. |
 | 2026-10-03 | M1-01 | started |
 | 2026-10-03 | M1-01 | done — Vite + React + TypeScript scaffold; `npm run build` succeeds |
+| 2026-10-03 | M1-02 | started |
+| 2026-10-03 | M1-04 | cancelled — do not use Firebase emulators |
+| 2026-10-03 | M1-02 | done — Tailwind shell; cream canvas and title verified in the browser |
+| 2026-10-03 | M1-03 | done — Firebase SDK, firebase.json, placeholder rules and project id |
+| 2026-10-03 | M1-05 | done — `.env.example` and `VITE_FIREBASE_*` wiring, no emulator flag |
+| 2026-10-03 | M1-06 | done — `/` renders the blank shell |
+| 2026-10-03 | M1-07 | done — `npm run dev` serves http://localhost:5173/ |
+| 2026-10-03 | M1 | phase done. Next work is M2-01. |
+| 2026-10-03 | M1-05 | `.env` has the live web config. `.firebaserc` default is `mini-portal-7f320`. |

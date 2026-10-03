@@ -5,7 +5,7 @@ Milestone 1: Project Setup & Emulator Scaffold
 
 Initialize repo (e.g., Vite/React + Tailwind + Firebase SDK).
 
-Set up local Firebase emulators (Auth, Firestore, Storage, Functions).
+Configure the Firebase project from env. Do not use local emulators.
 
 Configure environment variables and basic routing.
 

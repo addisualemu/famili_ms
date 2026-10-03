@@ -349,5 +349,5 @@ To maintain financial integrity, star disbursements and redemptions must execute
 ## 8. Development & Deployment Roadmap
 
 1. **Firebase CLI Init:** Run `firebase init` selecting **Firestore, Functions, Hosting, and Storage**.
-2. **Local Emulators:** Use `firebase emulators:start` to simulate Firestore, Auth, and Storage locally without incurring cloud charges during UI development.
+2. **Firebase project:** Point the web app at the Firebase project in env (`VITE_FIREBASE_*`). Do not use the local emulators.
 3. **PWA Integration:** Add a `manifest.json` and service worker so shared tablets can install the hosted URL directly to the home screen as a full-screen app.

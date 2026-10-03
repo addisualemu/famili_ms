@@ -21,13 +21,13 @@ Executable tasks live in `PROGRESS.md`. This skill only defines phase done-when.
 
 If `PROGRESS.md` Current Phase is `M1` (or the repo has no app yet), you are on **Milestone 1**.
 
-## Milestone 1 — Setup and emulators
+## Milestone 1 — Setup
 
 - Vite + React + TypeScript + Tailwind
-- Firebase SDK, `firebase.json`, emulator config (Auth, Firestore, Storage, Functions)
-- Env for project id + emulator flags
+- Firebase SDK, `firebase.json`, placeholder config
+- Env for the Firebase project id
 - Basic router shell (empty routes are fine)
-- **Done:** `npm run dev` and `firebase emulators:start` both run. No product UI required.
+- **Done:** `npm run dev` runs. No product UI. No Firebase emulators.
 
 ## Milestone 2 — Auth shell and profile switcher
 
