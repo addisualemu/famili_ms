@@ -5,7 +5,7 @@ Source of work for every agent turn. Do not implement anything that is not a tas
 ## Current
 
 - Phase: `M2`
-- Active: `none`
+- Active: `M2-05`
 - Updated: `2026-10-03`
 - Plan: Spark only. Do not use Cloud Functions or any other Blaze-only product.
 
@@ -51,8 +51,8 @@ Done when: parent can sign in, switch to a child profile, and lock/unlock senior
 - [x] **M2-01** Build parent email/password login view
 - [x] **M2-02** Wire Firebase Auth and parent custom claims (`role`, `familyId`)
 - [x] **M2-03** Seed or create family + members (parent, Leo junior, Maya senior)
-- [ ] **M2-04** Build shared-tablet avatar profile switcher
-- [ ] **M2-05** Add 4-digit PIN lock for senior and parent (salted hash on member)
+- [x] **M2-04** Build shared-tablet avatar profile switcher
+- [~] **M2-05** Add 4-digit PIN lock for senior and parent (salted hash on member)
 - [ ] **M2-06** Persist active member in client state
 - [ ] **M2-07** Browser-verify login, switch, and PIN lock
 - [x] **M2-08** Add Google sign-in on the parent login view
@@ -171,3 +171,6 @@ Phase status: `locked` (do not start until M6 is `done`)
 | 2026-10-03 | M2-03 | done — Alemu Family with parent, Leo junior, and Maya senior |
 | 2026-10-03 | M2-10 | started |
 | 2026-10-03 | M2-10 | done — dev server was serving the pre-family screen; restarted on port 5173 |
+| 2026-10-03 | M2-04 | started |
+| 2026-10-03 | M2-04 | done — avatar profile switcher for parent, Leo, and Maya |
+| 2026-10-03 | M2-05 | started |

@@ -7,6 +7,7 @@ export type FamilyMember = {
   name: string
   role: 'parent' | 'child'
   tier?: 'junior' | 'senior'
+  pinHash: string | null
 }
 
 type MemberWrite = {
@@ -82,5 +83,6 @@ export function memberFromSnapshot(
     name: typeof data.name === 'string' ? data.name : 'Member',
     role,
     tier,
+    pinHash: typeof data.pinHash === 'string' && data.pinHash.length > 0 ? data.pinHash : null,
   }
 }
