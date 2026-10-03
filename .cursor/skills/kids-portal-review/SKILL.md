@@ -20,7 +20,7 @@ Review only what exists. Name the milestone under review. Do not suggest buildin
 ### Integrity
 
 - [ ] No client writes to `members.balance` or `ledgerTransactions`
-- [ ] Approve / redeem / manual adjust use callable functions + Firestore transactions
+- [ ] No Cloud Functions or other Blaze-only products
 - [ ] Approve is idempotent if the work order is already `completed`
 - [ ] Redeem checks Spend balance, `active`, stock, and cooldown
 - [ ] Manual adjustments require a memo

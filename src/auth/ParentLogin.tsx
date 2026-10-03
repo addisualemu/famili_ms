@@ -1,17 +1,16 @@
 import { useState, type FormEvent } from 'react'
+import { emailSignInError, signInWithEmail } from './email.ts'
 import { googleSignInError, signInWithGoogle } from './google.ts'
 
-type ParentLoginProps = {
-  onSubmit?: (credentials: { email: string; password: string }) => void
-}
-
-export function ParentLogin({ onSubmit }: ParentLoginProps) {
+export function ParentLogin() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [googleBusy, setGoogleBusy] = useState(false)
+  const [emailBusy, setEmailBusy] = useState(false)
+  const busy = googleBusy || emailBusy
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const trimmedEmail = email.trim()
 
@@ -26,7 +25,14 @@ export function ParentLogin({ onSubmit }: ParentLoginProps) {
     }
 
     setError(null)
-    onSubmit?.({ email: trimmedEmail, password })
+    setEmailBusy(true)
+    try {
+      await signInWithEmail(trimmedEmail, password)
+    } catch (signInError) {
+      setError(emailSignInError(signInError))
+    } finally {
+      setEmailBusy(false)
+    }
   }
 
   async function handleGoogleSignIn() {
@@ -54,7 +60,7 @@ export function ParentLogin({ onSubmit }: ParentLoginProps) {
 
         <button
           className="mt-8 flex min-h-11 w-full items-center justify-center gap-3 rounded-2xl border border-navy/15 bg-white text-sm font-semibold disabled:opacity-60"
-          disabled={googleBusy}
+          disabled={busy}
           onClick={handleGoogleSignIn}
           type="button"
         >
@@ -105,10 +111,11 @@ export function ParentLogin({ onSubmit }: ParentLoginProps) {
           </div>
 
           <button
-            className="min-h-11 w-full rounded-2xl bg-navy text-sm font-semibold text-cream"
+            className="min-h-11 w-full rounded-2xl bg-navy text-sm font-semibold text-cream disabled:opacity-60"
+            disabled={busy}
             type="submit"
           >
-            Sign in
+            {emailBusy ? 'Signing in…' : 'Sign in'}
           </button>
         </form>
       </section>

@@ -27,7 +27,7 @@ Spend/Save/Give split cards.
 
 Work order detail view with checklist toggle and two-way Firestore comment thread.
 
-Milestone 5: Parent Console & Cloud Functions
+Milestone 5: Parent Console
 
 Approval queue for pending submissions.
 

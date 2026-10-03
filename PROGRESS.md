@@ -7,6 +7,7 @@ Source of work for every agent turn. Do not implement anything that is not a tas
 - Phase: `M2`
 - Active: `none`
 - Updated: `2026-10-03`
+- Plan: Spark only. Do not use Cloud Functions or any other Blaze-only product.
 
 Statuses: `[ ]` todo · `[~]` in progress (at most one) · `[x]` done · `[-]` blocked
 
@@ -48,13 +49,14 @@ Phase status: `in progress`
 Done when: parent can sign in, switch to a child profile, and lock/unlock senior or parent with PIN. No missions yet.
 
 - [x] **M2-01** Build parent email/password login view
-- [ ] **M2-02** Wire Firebase Auth and parent custom claims (`role`, `familyId`)
+- [x] **M2-02** Wire Firebase Auth and parent custom claims (`role`, `familyId`)
 - [ ] **M2-03** Seed or create family + members (parent, Leo junior, Maya senior)
 - [ ] **M2-04** Build shared-tablet avatar profile switcher
 - [ ] **M2-05** Add 4-digit PIN lock for senior and parent (salted hash on member)
 - [ ] **M2-06** Persist active member in client state
 - [ ] **M2-07** Browser-verify login, switch, and PIN lock
 - [x] **M2-08** Add Google sign-in on the parent login view
+- [x] **M2-09** Drop the Blaze-only claims callable; read parent claims from the ID token
 
 ---
 
@@ -89,18 +91,20 @@ Done when: senior can toggle a checklist, comment on the work order, and submit.
 
 ---
 
-## M5 — Parent Console & Cloud Functions
+## M5 — Parent Console
 
 Phase status: `todo`
+
+Spark plan. Do not implement approve or redeem as Cloud Functions.
 
 Done when: Approve pays Stars atomically; Rework returns the order with a note. Client still cannot write `balance`.
 
 - [ ] **M5-01** Build Parent Console layout (approval queue + manage)
 - [ ] **M5-02** Render pending_review submissions with photo thumbs
 - [ ] **M5-03** Build create-work-order form (WO-01, including open bounty)
-- [ ] **M5-04** Implement `approveWorkOrder` callable with a Firestore transaction
+- [ ] **M5-04** Implement approve so it pays Stars without Cloud Functions
 - [ ] **M5-05** Implement Rework (note required, status `rework`)
-- [ ] **M5-06** Implement `redeemStoreItem` callable with a Firestore transaction
+- [ ] **M5-06** Implement redeem so it debits Spend without Cloud Functions
 - [ ] **M5-07** Ship Firestore + Storage rules (ledger write = false)
 - [ ] **M5-08** Browser-verify approve credits Stars and rework returns the mission
 
@@ -152,3 +156,13 @@ Phase status: `locked` (do not start until M6 is `done`)
 | 2026-10-03 | M2-01 | done — parent email/password sign-in view on `/` and `/login` |
 | 2026-10-03 | M2-08 | started |
 | 2026-10-03 | M2-08 | done — Continue with Google opens Firebase Google sign-in |
+| 2026-10-03 | M2-02 | started |
+| 2026-10-03 | M2-02 | blocked — email sign-in calls Firebase; `ensureParentClaims` is not deployed. CLI user cannot access project `mini-portal-7f320` (403). |
+| 2026-10-03 | M2-02 | resumed — retry deploy |
+| 2026-10-03 | M2-02 | still blocked — deploy to `mini-portal-7f320` returns 403 |
+| 2026-10-03 | M2-02 | resumed — CLI is addisudamena49@gmail.com; adding actclearapp@gmail.com |
+| 2026-10-03 | M2-02 | still blocked — `login:add` cannot run in this non-interactive session |
+| 2026-10-03 | M2-02 | resumed — CLI in WSL is actclearapp@gmail.com; deploying claims |
+| 2026-10-03 | M2-02 | done — parent claims set on actclearapp. Callable deploy needs the Blaze plan. |
+| 2026-10-03 | M2-09 | started |
+| 2026-10-03 | M2-09 | done — sign-in reads parent claims from the ID token; Cloud Functions removed |

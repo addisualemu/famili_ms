@@ -50,11 +50,11 @@ If `PROGRESS.md` Current Phase is `M1` (or the repo has no app yet), you are on 
 - Work order detail, checklist toggles, two-way `messages` subcollection
 - **Done:** Senior can complete a checklist, comment, and submit. Parent tools wait.
 
-## Milestone 5 — Parent console and Cloud Functions
+## Milestone 5 — Parent console
 
 - Approval queue
 - Create work order
-- `approveWorkOrder` and (if store data exists) `redeemStoreItem` callables with transactions
+- Approve and redeem without Cloud Functions. The project stays on the Spark plan.
 - **Done:** Approve pays Stars atomically. Rework returns the order with a note. Client still cannot write `balance`.
 
 ## Milestone 6 — Family store and redemption

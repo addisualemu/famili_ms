@@ -1,1 +1,1 @@
-// Placeholder for firebase.json. approveWorkOrder and redeemStoreItem land in Milestone 5.
+// Spark plan. This project does not use Cloud Functions.

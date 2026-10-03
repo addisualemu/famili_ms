@@ -39,7 +39,7 @@ open (bounty) → in_progress → pending_review → completed
 ```
 
 - Unassigned + `isBounty: true`: first claim wins, then `in_progress` for that child only.
-- Approve credits the ledger via Cloud Function and sets `completed`.
+- Approve credits Stars and sets `completed`. Do not use a Cloud Function.
 - Rework returns the order to the kid’s active list with the parent’s note.
 - Reject is parent-only; do not pay Stars.
 

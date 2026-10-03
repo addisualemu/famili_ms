@@ -10,7 +10,8 @@
 * **Identity & Access:** Firebase Authentication (Parent email/password + custom token / PIN-based child profiles).
 * **Primary Database:** Cloud Firestore (NoSQL document-based, real-time listeners for live task and balance syncing).
 * **File Storage:** Cloud Storage for Firebase (optimized for chore proof photos and avatar uploads).
-* **Backend Logic & Security:** Cloud Functions for Firebase (enforces atomic ledger balances, prevents double-spending, manages scheduled interest/allowances).
+* **Plan:** Spark only. Do not use Cloud Functions, Cloud Build, or any other Blaze-only product.
+* **Backend Logic & Security:** Firestore security rules. Parent custom claims are read from the ID token. Balances are not written from the client.
 
 ---
 
@@ -36,7 +37,7 @@ Shared family tablets and phones require a parent-controlled master account comb
 ### 2.1 Parent Authentication
 
 * **Provider:** Standard Firebase Auth (`EmailAuthProvider` or OAuth).
-* **Custom Claims:** On sign-up or verification, assign `customUserClaims: { role: 'parent', familyId: '<FAMILY_UID>' }`.
+* **Custom Claims:** `{ role: 'parent', familyId: '<FAMILY_UID>' }` on the parent Auth user. The client reads the ID token. Do not set claims with a Cloud Function.
 
 ### 2.2 Child Profile Switcher (Shared Device Session)
 
@@ -44,7 +45,7 @@ To avoid logging out of the parent Firebase session on a home tablet:
 
 1. Store the active child’s `childId` in local client state (`localStorage` or memory).
 2. Older kids and parents protect their screens with a local 4-digit PIN stored as a salted hash in the child document.
-3. For secure server-side mutations (approving stars, spending money), requests pass through **Cloud Functions (Callable Functions)** that verify the caller's rights and PIN before mutating the Firestore ledger.
+3. Older kids and parents unlock with the local 4-digit PIN. Do not use Cloud Functions. Do not write balances from the client.
 
 ---
 
@@ -219,7 +220,7 @@ service cloud.firestore {
       // Members profiles
       match /members/{memberId} {
         allow read: if isFamilyMember(familyId);
-        // Balance mutations must go through Cloud Functions
+        // Client must not change balance
         allow update: if isParent(familyId) && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['balance']);
         allow write: if isParent(familyId);
       }
@@ -238,7 +239,7 @@ service cloud.firestore {
         }
       }
 
-      // Ledger: strictly append-only, handled via Cloud Functions
+      // Ledger: append-only. Client writes are denied.
       match /ledgerTransactions/{transactionId} {
         allow read: if isFamilyMember(familyId);
         allow write: if false; 
@@ -282,9 +283,11 @@ service firebase.storage {
 
 ---
 
-## 6. Core Cloud Functions (Atomic Financial Ledger)
+## 6. Ledger integrity
 
-To maintain financial integrity, star disbursements and redemptions must execute inside Firestore transactions.
+Do not implement this section with Cloud Functions. The project stays on the Spark plan.
+
+Star disbursements and redemptions must stay consistent. Do not write `members.balance` or `ledgerTransactions` from the client.
 
 ### 6.1 `approveWorkOrder` (Callable Function)
 
