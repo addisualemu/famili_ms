@@ -6,7 +6,7 @@ Build these screens in milestone order. Names are route/page names, not mockup O
 
 | Screen | Who | Purpose |
 | --- | --- | --- |
-| Parent login | Parent | Email/password |
+| Parent login | Parent | Email/password or Google |
 | Profile switcher | All | Avatar grid, optional PIN |
 | PIN lock | Senior / parent | 4 digits |
 

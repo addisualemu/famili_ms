@@ -43,17 +43,18 @@ Done when: `npm run dev` runs. No product UI. No Firebase emulators.
 
 ## M2 — Auth Shell & Profile Switcher
 
-Phase status: `todo`
+Phase status: `in progress`
 
 Done when: parent can sign in, switch to a child profile, and lock/unlock senior or parent with PIN. No missions yet.
 
-- [ ] **M2-01** Build parent email/password login view
+- [x] **M2-01** Build parent email/password login view
 - [ ] **M2-02** Wire Firebase Auth and parent custom claims (`role`, `familyId`)
 - [ ] **M2-03** Seed or create family + members (parent, Leo junior, Maya senior)
 - [ ] **M2-04** Build shared-tablet avatar profile switcher
 - [ ] **M2-05** Add 4-digit PIN lock for senior and parent (salted hash on member)
 - [ ] **M2-06** Persist active member in client state
 - [ ] **M2-07** Browser-verify login, switch, and PIN lock
+- [x] **M2-08** Add Google sign-in on the parent login view
 
 ---
 
@@ -147,3 +148,7 @@ Phase status: `locked` (do not start until M6 is `done`)
 | 2026-10-03 | M1-07 | done — `npm run dev` serves http://localhost:5173/ |
 | 2026-10-03 | M1 | phase done. Next work is M2-01. |
 | 2026-10-03 | M1-05 | `.env` has the live web config. `.firebaserc` default is `mini-portal-7f320`. |
+| 2026-10-03 | M2-01 | started |
+| 2026-10-03 | M2-01 | done — parent email/password sign-in view on `/` and `/login` |
+| 2026-10-03 | M2-08 | started |
+| 2026-10-03 | M2-08 | done — Continue with Google opens Firebase Google sign-in |
