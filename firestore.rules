@@ -1,10 +1,73 @@
 rules_version = '2';
 
-// Placeholder lock. Family rules ship in M5-07.
+// Family and members only. Other collections stay closed until their milestone.
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if false;
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isFamilyMember(familyId) {
+      return signedIn() && request.auth.token.familyId == familyId;
+    }
+
+    function isParent(familyId) {
+      return isFamilyMember(familyId) && request.auth.token.role == 'parent';
+    }
+
+    function validFamily(data) {
+      return data.keys().hasOnly(['familyName', 'createdAt', 'currencyName', 'starToRealCurrencyRate'])
+        && data.familyName is string
+        && data.familyName.size() > 0
+        && data.familyName.size() < 80
+        && data.createdAt is timestamp
+        && data.currencyName == 'Stars'
+        && data.starToRealCurrencyRate is number;
+    }
+
+    function validAllocation(data) {
+      return !data.keys().hasAny(['allocationConfig'])
+        || (
+          data.allocationConfig.keys().hasOnly(['spendPct', 'savePct', 'givePct'])
+          && data.allocationConfig.spendPct is int
+          && data.allocationConfig.savePct is int
+          && data.allocationConfig.givePct is int
+          && data.allocationConfig.spendPct + data.allocationConfig.savePct + data.allocationConfig.givePct == 100
+        );
+    }
+
+    function validMember(data) {
+      return data.keys().hasAll(['name', 'role', 'avatarUrl', 'pinHash'])
+        && data.keys().hasOnly(['name', 'role', 'tier', 'avatarUrl', 'pinHash', 'allocationConfig', 'currentGoalItemId'])
+        && !data.keys().hasAny(['balance'])
+        && data.name is string
+        && data.name.size() > 0
+        && data.name.size() < 40
+        && data.role in ['parent', 'child']
+        && data.avatarUrl is string
+        && data.avatarUrl.size() < 500
+        && (data.pinHash == null || (data.pinHash is string && data.pinHash.size() < 200))
+        && (!data.keys().hasAny(['currentGoalItemId']) || (data.currentGoalItemId is string && data.currentGoalItemId.size() < 80))
+        && validAllocation(data)
+        && (
+          (data.role == 'parent' && !data.keys().hasAny(['tier', 'allocationConfig', 'currentGoalItemId']))
+          || (data.role == 'child' && data.tier in ['junior', 'senior'])
+        );
+    }
+
+    match /families/{familyId} {
+      allow read: if isFamilyMember(familyId);
+      allow create, update: if isParent(familyId) && validFamily(request.resource.data);
+      allow delete: if false;
+
+      match /members/{memberId} {
+        allow read: if isFamilyMember(familyId);
+        allow create: if isParent(familyId) && validMember(request.resource.data);
+        allow update: if isParent(familyId)
+          && validMember(request.resource.data)
+          && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['balance']);
+        allow delete: if isParent(familyId);
+      }
     }
   }
 }

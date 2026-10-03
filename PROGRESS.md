@@ -50,13 +50,14 @@ Done when: parent can sign in, switch to a child profile, and lock/unlock senior
 
 - [x] **M2-01** Build parent email/password login view
 - [x] **M2-02** Wire Firebase Auth and parent custom claims (`role`, `familyId`)
-- [ ] **M2-03** Seed or create family + members (parent, Leo junior, Maya senior)
+- [x] **M2-03** Seed or create family + members (parent, Leo junior, Maya senior)
 - [ ] **M2-04** Build shared-tablet avatar profile switcher
 - [ ] **M2-05** Add 4-digit PIN lock for senior and parent (salted hash on member)
 - [ ] **M2-06** Persist active member in client state
 - [ ] **M2-07** Browser-verify login, switch, and PIN lock
 - [x] **M2-08** Add Google sign-in on the parent login view
 - [x] **M2-09** Drop the Blaze-only claims callable; read parent claims from the ID token
+- [x] **M2-10** Show the seeded family members on the signed-in card
 
 ---
 
@@ -166,3 +167,7 @@ Phase status: `locked` (do not start until M6 is `done`)
 | 2026-10-03 | M2-02 | done — parent claims set on actclearapp. Callable deploy needs the Blaze plan. |
 | 2026-10-03 | M2-09 | started |
 | 2026-10-03 | M2-09 | done — sign-in reads parent claims from the ID token; Cloud Functions removed |
+| 2026-10-03 | M2-03 | started |
+| 2026-10-03 | M2-03 | done — Alemu Family with parent, Leo junior, and Maya senior |
+| 2026-10-03 | M2-10 | started |
+| 2026-10-03 | M2-10 | done — dev server was serving the pre-family screen; restarted on port 5173 |

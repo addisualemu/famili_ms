@@ -1,15 +1,17 @@
 import { signOut, type User } from 'firebase/auth'
 import { useState } from 'react'
 import { auth } from '../lib/firebase.ts'
+import type { FamilyMember } from '../family/seedFamily.ts'
 import type { ParentClaims } from './claims.ts'
 
 type ParentSessionProps = {
   user: User
   claims: ParentClaims | null
+  members: FamilyMember[]
   sessionError?: string | null
 }
 
-export function ParentSession({ user, claims, sessionError }: ParentSessionProps) {
+export function ParentSession({ user, claims, members, sessionError }: ParentSessionProps) {
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const name = user.displayName || user.email || 'Parent'
@@ -41,6 +43,22 @@ export function ParentSession({ user, claims, sessionError }: ParentSessionProps
           <p className="mt-4 text-xs font-semibold tracking-[0.16em] uppercase">
             Parent
           </p>
+        ) : null}
+        {members.length > 0 ? (
+          <>
+          <p className="mt-6 text-xs font-semibold tracking-[0.16em] uppercase">
+            Family
+          </p>
+          <ul className="mt-3 space-y-2 text-sm">
+            {members.map((member) => (
+              <li key={member.id}>
+                {member.name}
+                {member.tier === 'junior' ? ' · Junior' : null}
+                {member.tier === 'senior' ? ' · Senior' : null}
+              </li>
+            ))}
+          </ul>
+          </>
         ) : null}
 
         {sessionError || error ? (
