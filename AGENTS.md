@@ -2,6 +2,18 @@
 
 Closed-loop family OS that teaches responsibility and money skills. Chores and homework are **Work Orders**. Kids earn **Stars**. Parents approve work, run the bank, and stock the **Family Marketplace**. No real-world banking.
 
+## Progress agent (do this first)
+
+Every unit of work comes from `PROGRESS.md`. There is no side quest.
+
+1. Read `PROGRESS.md` and load `kids-portal-progress`.
+2. Claim one task id (mark `[~]`, set `Active`).
+3. Do only that task.
+4. Update the board in the same turn (`[x]` / `[~]` / `[-]`, `Updated`, Log).
+5. Start the user reply with `**Task:** ID — title`.
+
+If the user asks for something that is not on the board, add a task under the current phase first, then do it. Do not code unnamed work.
+
 ## Source of truth
 
 Read these before inventing behavior. Later code and these docs win over memory.
@@ -10,7 +22,8 @@ Read these before inventing behavior. Later code and these docs win over memory.
 | --- | --- |
 | `PRD.md` | Roles, modules, acceptance criteria, entities |
 | `Technical_architectur.md` | Firebase schema, auth, rules, callable functions |
-| `Implementation_phasing.md` | Build order. Never skip ahead. |
+| `PROGRESS.md` | Live task board. Only source of work. |
+| `Implementation_phasing.md` | Phase definitions behind the board |
 | `UI_mockup_ideas.jpeg` | Layout, density, and role-specific chrome |
 
 Project skills in `.cursor/skills/` hold the working rules. Load the matching skill before editing that area.
@@ -20,7 +33,8 @@ Project skills in `.cursor/skills/` hold the working rules. Load the matching sk
 | Roles, copy, feature scope, acceptance | `kids-portal-product` |
 | Auth, Firestore, Storage, Functions, rules | `kids-portal-firebase` |
 | Screens, tiers, layout, visual language | `kids-portal-ui` |
-| What to build now vs later | `kids-portal-milestones` |
+| Pick, claim, and close a task | `kids-portal-progress` |
+| Phase done-when definitions | `kids-portal-milestones` |
 | Reviewing a milestone or PR | `kids-portal-review` |
 
 ## Stack (locked)
@@ -60,8 +74,10 @@ Work order `status`: `open` → `in_progress` → `pending_review` → `complete
 
 ## How to take a task
 
-1. Identify the milestone from `kids-portal-milestones`.
-2. Read the product + firebase + UI skills that the change touches.
-3. Implement only that slice. Match `UI_mockup_ideas.jpeg` for the role you are building.
-4. Check the feature IDs in `kids-portal-product` (WO-*, MSG-*, BNK-*, SHP-*).
-5. If the change is visual, verify it in the browser on tablet and phone widths.
+1. Open `PROGRESS.md`. Claim the Active task or the first `[ ]` in the current phase (`kids-portal-progress`).
+2. Identify the milestone done-when from `kids-portal-milestones`.
+3. Read the product + firebase + UI skills that the change touches.
+4. Implement only that task id. Match `UI_mockup_ideas.jpeg` for the role you are building.
+5. Check the feature IDs in `kids-portal-product` (WO-*, MSG-*, BNK-*, SHP-*).
+6. If the change is visual, verify it in the browser on tablet and phone widths.
+7. Update `PROGRESS.md` before you finish the turn.

@@ -5,8 +5,10 @@ alwaysApply: true
 
 # Kids Portal constraints
 
+- Before any implementation, read `PROGRESS.md` and claim one task id. Do not start work that is not on the board.
+- After any implementation, update that task’s checkbox, `Active`, `Updated`, and Log in `PROGRESS.md`.
 - Stack is Vite + React + TypeScript + Tailwind + Firebase (Auth, Firestore, Storage, Functions, Hosting) + PWA.
-- Build only the current milestone in `Implementation_phasing.md`. Do not implement later modules “while you are here.”
+- Build only the current phase in `PROGRESS.md`. Do not implement later modules “while you are here.”
 - Never write `members.balance` or `ledgerTransactions` from client code. Use callable Cloud Functions and Firestore transactions.
 - One parent Firebase Auth session per device. Children are `members` documents, switched locally, with an optional 4-digit PIN for senior/parent.
 - Junior and senior share the same schema. `members.tier` changes UI only.
@@ -14,4 +16,4 @@ alwaysApply: true
 - UI copy: Missions (junior), Work Orders (senior/parent), Stars, Spend/Save/Give, Parent Console, Family Marketplace.
 - After UI or flow changes, verify in the browser. Do not stop at a screenshot.
 
-Load project skills before coding: `kids-portal-product`, `kids-portal-firebase`, `kids-portal-ui`, `kids-portal-milestones`.
+Load `kids-portal-progress` first, then `kids-portal-product`, `kids-portal-firebase`, `kids-portal-ui`, `kids-portal-milestones` as needed.

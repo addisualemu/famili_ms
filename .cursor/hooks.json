@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "hooks": {
+    "sessionStart": [
+      {
+        "command": "node .cursor/hooks/inject-progress.mjs"
+      }
+    ],
+    "stop": [
+      {
+        "type": "prompt",
+        "loop_limit": 1,
+        "prompt": "If this turn created or changed product/code/config and PROGRESS.md was not updated to match (Active, task checkbox, Updated, Log), continue and update PROGRESS.md now. If the board already matches the work, or this turn only answered a question with no file changes, do not follow up."
+      }
+    ]
+  }
+}

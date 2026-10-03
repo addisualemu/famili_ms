@@ -11,13 +11,15 @@ Source: `Implementation_phasing.md`.
 
 ## Current-milestone protocol
 
-1. State which milestone you are on and what “done” means.
-2. Read `kids-portal-product`, plus firebase/UI skills if that milestone touches them.
-3. Implement only listed deliverables.
-4. Do not seed later-milestone UI “as a placeholder” unless the user asks.
-5. When finished, list leftover gaps. Do not silently start the next milestone.
+Executable tasks live in `PROGRESS.md`. This skill only defines phase done-when. Follow `kids-portal-progress` to claim and close ids.
 
-If the repo has no app yet, you are on **Milestone 1**.
+1. Read `PROGRESS.md`. State the Active task id and the phase done-when below.
+2. Read `kids-portal-product`, plus firebase/UI skills if that task touches them.
+3. Implement only that task id.
+4. Do not seed later-milestone UI “as a placeholder” unless the user asks.
+5. Update `PROGRESS.md`. When the phase is fully `[x]`, list leftover gaps. Do not silently start the next milestone.
+
+If `PROGRESS.md` Current Phase is `M1` (or the repo has no app yet), you are on **Milestone 1**.
 
 ## Milestone 1 — Setup and emulators
 

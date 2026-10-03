@@ -11,6 +11,8 @@ Review only what exists. Name the milestone under review. Do not suggest buildin
 
 ### Scope
 
+- [ ] `PROGRESS.md` Current phase matches the work under review
+- [ ] Touched task ids are `[x]` only if their done-when is true
 - [ ] Work stays inside the current milestone (`kids-portal-milestones`)
 - [ ] No Phase 2 features (interest, streaks, bulletins, custom buys) unless requested
 - [ ] Feature IDs in `kids-portal-product/acceptance.md` are cited for touched flows
