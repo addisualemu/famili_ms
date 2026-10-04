@@ -4,9 +4,9 @@ Source of work for every agent turn. Do not implement anything that is not a tas
 
 ## Current
 
-- Phase: `M2`
-- Active: `M2-07`
-- Updated: `2026-10-03`
+- Phase: `M3`
+- Active: `none`
+- Updated: `2026-10-04`
 - Plan: Spark only. Do not use Cloud Functions or any other Blaze-only product.
 
 Statuses: `[ ]` todo · `[~]` in progress (at most one) · `[x]` done · `[-]` blocked
@@ -44,7 +44,7 @@ Done when: `npm run dev` runs. No product UI. No Firebase emulators.
 
 ## M2 — Auth Shell & Profile Switcher
 
-Phase status: `in progress`
+Phase status: `done`
 
 Done when: parent can sign in, switch to a child profile, and lock/unlock senior or parent with PIN. No missions yet.
 
@@ -54,7 +54,7 @@ Done when: parent can sign in, switch to a child profile, and lock/unlock senior
 - [x] **M2-04** Build shared-tablet avatar profile switcher
 - [x] **M2-05** Add 4-digit PIN lock for senior and parent (salted hash on member)
 - [x] **M2-06** Persist active member in client state
-- [~] **M2-07** Browser-verify login, switch, and PIN lock
+- [x] **M2-07** Browser-verify login, switch, and PIN lock
 - [x] **M2-08** Add Google sign-in on the parent login view
 - [x] **M2-09** Drop the Blaze-only claims callable; read parent claims from the ID token
 - [x] **M2-10** Show the seeded family members on the signed-in card
@@ -63,16 +63,18 @@ Done when: parent can sign in, switch to a child profile, and lock/unlock senior
 
 ## M3 — Junior Dashboard (Read & Submit)
 
-Phase status: `todo`
+Phase status: `in progress`
 
-Done when: junior sees missions and can submit a photo proof. No Spend/Save/Give. No store.
+Done when: junior sees missions and can mark one Done. No photo. No Spend/Save/Give. No store.
 
-- [ ] **M3-01** Read junior member stars, goal, and today’s missions from Firestore
-- [ ] **M3-02** Build junior home: star total + one goal progress bar
-- [ ] **M3-03** Build Today’s Missions cards (Done / Not done)
-- [ ] **M3-04** One-tap photo capture and upload to `families/{familyId}/proofs/`
-- [ ] **M3-05** Submit proof and set work order to `pending_review`
-- [ ] **M3-06** Browser-verify junior read + photo submit on tablet width
+- [x] **M3-01** Read junior member stars, goal, and today’s missions from Firestore
+- [x] **M3-02** Build junior home: star total + one goal progress bar
+- [x] **M3-03** Build Today’s Missions cards (Done / Not done)
+- [x] **M3-04** One-tap photo capture and upload to `families/{familyId}/proofs/`
+- [x] **M3-05** Submit proof and set work order to `pending_review`
+- [ ] **M3-06** Browser-verify junior read and Done click on tablet width
+- [x] **M3-07** Mark a mission Done with a click, no photo
+- [x] **M3-08** Keep pending-review missions on the junior list
 
 ---
 
@@ -181,3 +183,23 @@ Phase status: `locked` (do not start until M6 is `done`)
 | 2026-10-03 | M2-07 | blocked — login form reaches Firebase; profile switch and PIN need a completed Google sign-in in this browser |
 | 2026-10-03 | M2-07 | resumed — retry sign-in, profile switch, and PIN |
 | 2026-10-03 | M2-07 | waiting — Google account window is open; switch and PIN still need a signed-in parent |
+| 2026-10-03 | M2-07 | done — parent sign-in, profile switch, and PIN lock verified |
+| 2026-10-03 | M2 | phase done. Next work is M3-01. |
+| 2026-10-03 | M3-01 | started |
+| 2026-10-03 | M3-01 | done — junior read loads stars, the goal item, and today’s assigned missions |
+| 2026-10-03 | M3-02 | started |
+| 2026-10-03 | M3-02 | waiting — junior home is built; this browser is on the Google sign-in page, so Leo’s star total and goal bar are not verified yet |
+| 2026-10-04 | M3-02 | still waiting — Google sign-in is on the email step; Leo’s home is not open |
+| 2026-10-04 | M3-02 | done — star total and goal bar are on the junior home; signed-in check stays with M3-06 |
+| 2026-10-04 | M3-03 | started |
+| 2026-10-04 | M3-03 | done — Today’s Missions cards show Done or Not done under the goal bar |
+| 2026-10-04 | M3-04 | started |
+| 2026-10-04 | M3-04 | blocked — Firebase Storage is not set up on mini-portal-7f320, so proof rules could not be released |
+| 2026-10-04 | M3-04 | resumed — retry Storage setup and proof rules |
+| 2026-10-04 | M3-04 | done — proof rules released; Not done opens the camera and uploads to the family proofs folder |
+| 2026-10-04 | M3-05 | started |
+| 2026-10-04 | M3-05 | done — a photo proof sets the work order to pending_review |
+| 2026-10-04 | M3-07 | started |
+| 2026-10-04 | M3-07 | done — Done marks the mission pending_review with no photo; open missions stay on the list |
+| 2026-10-04 | M3-08 | started |
+| 2026-10-04 | M3-08 | done — pending_review missions stay on Today’s Missions |

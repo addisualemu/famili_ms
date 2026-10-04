@@ -5,6 +5,8 @@ import { ParentLogin } from './auth/ParentLogin.tsx'
 import { useAuthUser } from './auth/useAuthUser.ts'
 import { auth } from './lib/firebase.ts'
 import { useFamily } from './family/useFamily.ts'
+import { JuniorHome } from './junior/JuniorHome.tsx'
+import { useJuniorHome } from './junior/useJuniorHome.ts'
 import { readActiveMember, writeActiveMember } from './profile/activeMember.ts'
 import { ActiveProfile } from './profile/ActiveProfile.tsx'
 import { PinLock } from './profile/PinLock.tsx'
@@ -23,6 +25,8 @@ function AuthGate() {
   const [signingOut, setSigningOut] = useState(false)
   const [signOutError, setSignOutError] = useState<string | null>(null)
   const restoredMember = useRef(false)
+  const selected = family.members.find((member) => member.id === activeId) ?? null
+  const juniorHome = useJuniorHome(claims?.familyId ?? null, selected)
 
   useEffect(() => {
     if (!claims || !family.ready || family.members.length === 0 || restoredMember.current) return
@@ -41,9 +45,9 @@ function AuthGate() {
     return <ParentLogin />
   }
 
-  const active = family.members.find((member) => member.id === activeId) ?? null
+  const active = selected
   const pending = family.members.find((member) => member.id === pendingId) ?? null
-  const sessionError = error || family.error || signOutError
+  const sessionError = error || family.error || signOutError || juniorHome.error
 
   function selectProfile(memberId: string) {
     const member = family.members.find((item) => item.id === memberId)
@@ -126,17 +130,23 @@ function AuthGate() {
     )
   }
 
+  const leaveProfile = () => {
+    if (claims) writeActiveMember(claims.familyId, null)
+    setActiveId(null)
+  }
+
+  if (active.tier === 'junior' && claims) {
+    return (
+      <>
+        <JuniorHome familyId={claims.familyId} home={juniorHome} member={active} onSwitch={leaveProfile} />
+        {sessionError ? <SessionError message={sessionError} /> : null}
+      </>
+    )
+  }
+
   return (
     <>
-      <ActiveProfile
-        member={active}
-        onSignOut={handleSignOut}
-        onSwitch={() => {
-          if (claims) writeActiveMember(claims.familyId, null)
-          setActiveId(null)
-        }}
-        signingOut={signingOut}
-      />
+      <ActiveProfile member={active} onSignOut={handleSignOut} onSwitch={leaveProfile} signingOut={signingOut} />
       {sessionError ? <SessionError message={sessionError} /> : null}
     </>
   )

@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node 'c:\\development\\kids_portal\\.codex\\hooks\\inject-progress.mjs'"
+          }
+        ]
+      }
+    ]
+  }
+}

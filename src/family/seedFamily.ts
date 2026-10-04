@@ -8,6 +8,8 @@ export type FamilyMember = {
   role: 'parent' | 'child'
   tier?: 'junior' | 'senior'
   pinHash: string | null
+  stars: number
+  currentGoalItemId: string | null
 }
 
 type MemberWrite = {
@@ -84,5 +86,16 @@ export function memberFromSnapshot(
     role,
     tier,
     pinHash: typeof data.pinHash === 'string' && data.pinHash.length > 0 ? data.pinHash : null,
+    stars: readStars(data.balance),
+    currentGoalItemId:
+      typeof data.currentGoalItemId === 'string' && data.currentGoalItemId.length > 0
+        ? data.currentGoalItemId
+        : null,
   }
+}
+
+function readStars(balance: unknown) {
+  if (!balance || typeof balance !== 'object') return 0
+  const total = (balance as { total?: unknown }).total
+  return typeof total === 'number' && Number.isFinite(total) ? total : 0
 }

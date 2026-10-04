@@ -1,6 +1,6 @@
 rules_version = '2';
 
-// Family and members only. Other collections stay closed until their milestone.
+// Family, members, work orders, and the goal item. Ledger stays closed.
 service cloud.firestore {
   match /databases/{database}/documents {
     function signedIn() {
@@ -55,6 +55,85 @@ service cloud.firestore {
         );
     }
 
+    function validProof(data) {
+      return data.keys().hasOnly(['photoUrls', 'notes', 'submittedAt'])
+        && data.photoUrls is list
+        && data.photoUrls.size() < 6
+        && data.notes is string
+        && data.notes.size() < 500
+        && (data.submittedAt == null || data.submittedAt is timestamp);
+    }
+
+    function validSubmittedProof(data) {
+      return data.keys().hasOnly(['photoUrls', 'notes', 'submittedAt'])
+        && data.photoUrls is list
+        && data.photoUrls.size() == 0
+        && data.notes is string
+        && data.notes.size() < 500
+        && data.submittedAt is timestamp;
+    }
+
+    function validWorkOrder(data) {
+      return data.keys().hasOnly([
+          'title',
+          'description',
+          'category',
+          'pointValue',
+          'assignedTo',
+          'isBounty',
+          'status',
+          'dueDate',
+          'requiresPhoto',
+          'proofSubmission',
+          'checklist',
+          'createdAt',
+          'createdBy',
+        ])
+        && data.title is string
+        && data.title.size() > 0
+        && data.title.size() < 80
+        && data.description is string
+        && data.description.size() < 500
+        && data.category in ['Daily Habit', 'Chores', 'Schoolwork', 'Deep Clean']
+        && data.pointValue is int
+        && data.pointValue >= 0
+        && data.pointValue <= 500
+        && data.assignedTo is string
+        && data.assignedTo.size() > 0
+        && data.assignedTo.size() < 80
+        && data.isBounty == false
+        && data.status in ['open', 'in_progress', 'pending_review', 'completed', 'rework']
+        && data.dueDate is timestamp
+        && data.requiresPhoto is bool
+        && data.createdAt is timestamp
+        && data.createdBy is string
+        && data.createdBy.size() > 0
+        && data.createdBy.size() < 80
+        && data.checklist is list
+        && data.checklist.size() == 0
+        && validProof(data.proofSubmission);
+    }
+
+    function validStoreItem(data) {
+      return data.keys().hasOnly(['title', 'category', 'pointCost', 'icon', 'stock', 'cooldownHours', 'active'])
+        && data.title is string
+        && data.title.size() > 0
+        && data.title.size() < 80
+        && data.category in ['privilege', 'outing', 'physical', 'external']
+        && data.pointCost is int
+        && data.pointCost >= 0
+        && data.pointCost <= 10000
+        && data.icon is string
+        && data.icon.size() < 16
+        && data.stock is int
+        && data.stock >= -1
+        && data.stock <= 10000
+        && data.cooldownHours is int
+        && data.cooldownHours >= 0
+        && data.cooldownHours <= 8760
+        && data.active is bool;
+    }
+
     match /families/{familyId} {
       allow read: if isFamilyMember(familyId);
       allow create, update: if isParent(familyId) && validFamily(request.resource.data);
@@ -67,6 +146,23 @@ service cloud.firestore {
           && validMember(request.resource.data)
           && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['balance']);
         allow delete: if isParent(familyId);
+      }
+
+      match /workOrders/{workOrderId} {
+        allow read: if isFamilyMember(familyId);
+        allow create: if isParent(familyId) && validWorkOrder(request.resource.data);
+        allow update: if isFamilyMember(familyId)
+          && resource.data.status in ['open', 'in_progress', 'rework']
+          && request.resource.data.status == 'pending_review'
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'proofSubmission'])
+          && validSubmittedProof(request.resource.data.proofSubmission);
+        allow delete: if false;
+      }
+
+      match /storeItems/{itemId} {
+        allow read: if isFamilyMember(familyId);
+        allow create: if isParent(familyId) && validStoreItem(request.resource.data);
+        allow update, delete: if false;
       }
     }
   }

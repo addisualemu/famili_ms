@@ -1,10 +1,20 @@
 rules_version = '2';
 
-// Placeholder lock. Proof rules ship in M5-07.
+// Proof photos only. Other objects stay closed.
 service firebase.storage {
   match /b/{bucket}/o {
-    match /{allPaths=**} {
-      allow read, write: if false;
+    function isFamilyMember(familyId) {
+      return request.auth != null && request.auth.token.familyId == familyId;
+    }
+
+    match /families/{familyId}/proofs/{fileName} {
+      allow read: if isFamilyMember(familyId);
+      allow create: if isFamilyMember(familyId)
+        && fileName.size() > 0
+        && fileName.size() < 120
+        && request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+      allow update, delete: if false;
     }
   }
 }
