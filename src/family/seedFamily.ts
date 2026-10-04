@@ -9,6 +9,9 @@ export type FamilyMember = {
   tier?: 'junior' | 'senior'
   pinHash: string | null
   stars: number
+  spend: number
+  save: number
+  give: number
   currentGoalItemId: string | null
 }
 
@@ -86,7 +89,10 @@ export function memberFromSnapshot(
     role,
     tier,
     pinHash: typeof data.pinHash === 'string' && data.pinHash.length > 0 ? data.pinHash : null,
-    stars: readStars(data.balance),
+    stars: readAmount(data.balance, 'total'),
+    spend: readAmount(data.balance, 'spend'),
+    save: readAmount(data.balance, 'save'),
+    give: readAmount(data.balance, 'give'),
     currentGoalItemId:
       typeof data.currentGoalItemId === 'string' && data.currentGoalItemId.length > 0
         ? data.currentGoalItemId
@@ -94,8 +100,8 @@ export function memberFromSnapshot(
   }
 }
 
-function readStars(balance: unknown) {
+function readAmount(balance: unknown, key: 'total' | 'spend' | 'save' | 'give') {
   if (!balance || typeof balance !== 'object') return 0
-  const total = (balance as { total?: unknown }).total
-  return typeof total === 'number' && Number.isFinite(total) ? total : 0
+  const value = (balance as Record<string, unknown>)[key]
+  return typeof value === 'number' && Number.isFinite(value) ? value : 0
 }

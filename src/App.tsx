@@ -5,7 +5,9 @@ import { ParentLogin } from './auth/ParentLogin.tsx'
 import { useAuthUser } from './auth/useAuthUser.ts'
 import { auth } from './lib/firebase.ts'
 import { useFamily } from './family/useFamily.ts'
+import { ParentConsole } from './parent/ParentConsole.tsx'
 import { JuniorHome } from './junior/JuniorHome.tsx'
+import { SeniorDashboard } from './senior/SeniorDashboard.tsx'
 import { useJuniorHome } from './junior/useJuniorHome.ts'
 import { readActiveMember, writeActiveMember } from './profile/activeMember.ts'
 import { ActiveProfile } from './profile/ActiveProfile.tsx'
@@ -133,6 +135,31 @@ function AuthGate() {
   const leaveProfile = () => {
     if (claims) writeActiveMember(claims.familyId, null)
     setActiveId(null)
+  }
+
+  if (active.role === 'parent' && claims) {
+    return (
+      <>
+        <ParentConsole
+          familyId={claims.familyId}
+          member={active}
+          members={family.members}
+          onSignOut={handleSignOut}
+          onSwitch={leaveProfile}
+          signingOut={signingOut}
+        />
+        {sessionError ? <SessionError message={sessionError} /> : null}
+      </>
+    )
+  }
+
+  if (active.tier === 'senior' && claims) {
+    return (
+      <>
+        <SeniorDashboard familyId={claims.familyId} member={active} onSwitch={leaveProfile} />
+        {sessionError ? <SessionError message={sessionError} /> : null}
+      </>
+    )
   }
 
   if (active.tier === 'junior' && claims) {

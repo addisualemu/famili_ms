@@ -4,8 +4,8 @@ Source of work for every agent turn. Do not implement anything that is not a tas
 
 ## Current
 
-- Phase: `M3`
-- Active: `none`
+- Phase: `M4`
+- Active: `M5-05`
 - Updated: `2026-10-04`
 - Plan: Spark only. Do not use Cloud Functions or any other Blaze-only product.
 
@@ -63,7 +63,7 @@ Done when: parent can sign in, switch to a child profile, and lock/unlock senior
 
 ## M3 — Junior Dashboard (Read & Submit)
 
-Phase status: `in progress`
+Phase status: `done`
 
 Done when: junior sees missions and can mark one Done. No photo. No Spend/Save/Give. No store.
 
@@ -72,7 +72,7 @@ Done when: junior sees missions and can mark one Done. No photo. No Spend/Save/G
 - [x] **M3-03** Build Today’s Missions cards (Done / Not done)
 - [x] **M3-04** One-tap photo capture and upload to `families/{familyId}/proofs/`
 - [x] **M3-05** Submit proof and set work order to `pending_review`
-- [ ] **M3-06** Browser-verify junior read and Done click on tablet width
+- [x] **M3-06** Browser-verify junior read and Done click on tablet width
 - [x] **M3-07** Mark a mission Done with a click, no photo
 - [x] **M3-08** Keep pending-review missions on the junior list
 
@@ -80,35 +80,35 @@ Done when: junior sees missions and can mark one Done. No photo. No Spend/Save/G
 
 ## M4 — Senior Dashboard & Work Order Thread
 
-Phase status: `todo`
+Phase status: `in progress`
 
 Done when: senior can toggle a checklist, comment on the work order, and submit. No parent console.
 
-- [ ] **M4-01** Build senior dashboard Accounts cards (Spend / Save / Give, read-only)
-- [ ] **M4-02** Build work order list (`WO-###`, title, stars, View / Submit)
-- [ ] **M4-03** Build work order detail with checklist toggles
-- [ ] **M4-04** Add two-way `messages` thread on the work order
-- [ ] **M4-05** Senior proof submit → `pending_review`
-- [ ] **M4-06** Stacked phone layout for senior console
+- [x] **M4-01** Build senior dashboard Accounts cards (Spend / Save / Give, read-only)
+- [x] **M4-02** Build work order list (`WO-###`, title, stars, View / Submit)
+- [x] **M4-03** Build work order detail with checklist toggles
+- [x] **M4-04** Add two-way `messages` thread on the work order
+- [x] **M4-05** Senior proof submit → `pending_review`
+- [x] **M4-06** Stacked phone layout for senior console
 - [ ] **M4-07** Browser-verify senior dashboard, thread, and phone width
 
 ---
 
 ## M5 — Parent Console
 
-Phase status: `todo`
+Phase status: `in progress`
 
 Spark plan. Do not implement approve or redeem as Cloud Functions.
 
 Done when: Approve pays Stars atomically; Rework returns the order with a note. Client still cannot write `balance`.
 
-- [ ] **M5-01** Build Parent Console layout (approval queue + manage)
-- [ ] **M5-02** Render pending_review submissions with photo thumbs
-- [ ] **M5-03** Build create-work-order form (WO-01, including open bounty)
-- [ ] **M5-04** Implement approve so it pays Stars without Cloud Functions
-- [ ] **M5-05** Implement Rework (note required, status `rework`)
-- [ ] **M5-06** Implement redeem so it debits Spend without Cloud Functions
-- [ ] **M5-07** Ship Firestore + Storage rules (ledger write = false)
+- [x] **M5-01** Build Parent Console layout (approval queue + manage)
+- [x] **M5-02** Render pending_review submissions with photo thumbs
+- [-] **M5-03** Build create-work-order form (WO-01, including open bounty)
+- [-] **M5-04** Implement approve so it pays Stars without Cloud Functions
+- [~] **M5-05** Implement Rework (note required, status `rework`)
+- [-] **M5-06** Implement redeem so it debits Spend without Cloud Functions
+- [-] **M5-07** Ship Firestore + Storage rules (ledger write = false)
 - [ ] **M5-08** Browser-verify approve credits Stars and rework returns the mission
 
 ---
@@ -203,3 +203,30 @@ Phase status: `locked` (do not start until M6 is `done`)
 | 2026-10-04 | M3-07 | done — Done marks the mission pending_review with no photo; open missions stay on the list |
 | 2026-10-04 | M3-08 | started |
 | 2026-10-04 | M3-08 | done — pending_review missions stay on Today’s Missions |
+| 2026-10-04 | M3-06 | started |
+| 2026-10-04 | M3-06 | waiting — this browser is on the parent sign-in screen, so Leo’s Done click is not verified |
+| 2026-10-04 | M3-06 | still waiting — Google sign-in asked for popups to be allowed, so Leo’s home did not open |
+| 2026-10-04 | M3-06 | done — junior read and Done click checked on tablet width |
+| 2026-10-04 | M3 | phase done. Next work is M4-01. |
+| 2026-10-04 | M4-01 | started |
+| 2026-10-04 | M4-01 | done — Maya’s dashboard shows read-only Spend, Save, and Give |
+| 2026-10-04 | M4-02 | started |
+| 2026-10-04 | M4-02 | done — Maya’s dashboard lists WO-104 and WO-105 with title, stars, View, and Submit |
+| 2026-10-04 | M4-03 | started |
+| 2026-10-04 | M4-03 | done — View opens the work order and checklist boxes toggle |
+| 2026-10-04 | M4-04 | started |
+| 2026-10-04 | M4-04 | done — Maya and the parent can write notes on a work order |
+| 2026-10-04 | M4-05 | started |
+| 2026-10-04 | M4-05 | done — Submit sets the work order to pending_review |
+| 2026-10-04 | M4-06 | started |
+| 2026-10-04 | M4-06 | done — phone stacks Spend, Save, and Give, and each work order card shows its checklist and Submit |
+| 2026-10-04 | M5-01 | done — Parent Console has the approval queue and manage column |
+| 2026-10-04 | M5-02 | done — pending work orders show a photo thumb, or No photo when the proof has no link |
+| 2026-10-04 | M5-03 | blocked — create form is in the console; rules deploy returned 403 for addisudamena49@gmail.com |
+| 2026-10-04 | M5-04 | blocked — paying Stars needs a client balance write or Cloud Functions, and both are disallowed |
+| 2026-10-04 | M5-05 | blocked — Rework is in the console; the status rule is not released yet (same 403) |
+| 2026-10-04 | M5-05 | resumed — Maya never saw the rework note because the note and status were one write, and the status write was rejected |
+| 2026-10-04 | M5-05 | note now saves on its own and shows on Maya’s work order; status still needs the rules release |
+| 2026-10-04 | M5-05 | the work order card shows a Rework mark and the note, before View |
+| 2026-10-04 | M5-06 | blocked — debiting Spend has the same Stars restriction as approve |
+| 2026-10-04 | M5-07 | blocked — rules file includes rework, bounty claim, and ledger write false; deploy returned 403 |

@@ -98,20 +98,67 @@ service cloud.firestore {
         && data.pointValue is int
         && data.pointValue >= 0
         && data.pointValue <= 500
-        && data.assignedTo is string
-        && data.assignedTo.size() > 0
-        && data.assignedTo.size() < 80
-        && data.isBounty == false
-        && data.status in ['open', 'in_progress', 'pending_review', 'completed', 'rework']
+        && (
+          (data.isBounty == true && data.assignedTo == null && data.status == 'open')
+          || (data.isBounty == false
+            && data.assignedTo is string
+            && data.assignedTo.size() > 0
+            && data.assignedTo.size() < 80
+            && data.status == 'in_progress')
+        )
         && data.dueDate is timestamp
         && data.requiresPhoto is bool
         && data.createdAt is timestamp
         && data.createdBy is string
         && data.createdBy.size() > 0
         && data.createdBy.size() < 80
-        && data.checklist is list
-        && data.checklist.size() == 0
+        && validChecklist(data.checklist)
         && validProof(data.proofSubmission);
+    }
+
+    function validChecklistItem(item) {
+      return item.keys().hasOnly(['text', 'done'])
+        && item.text is string
+        && item.text.size() > 0
+        && item.text.size() < 120
+        && item.done is bool;
+    }
+
+    function validChecklist(items) {
+      return items is list
+        && items.size() < 8
+        && (items.size() < 1 || validChecklistItem(items[0]))
+        && (items.size() < 2 || validChecklistItem(items[1]))
+        && (items.size() < 3 || validChecklistItem(items[2]))
+        && (items.size() < 4 || validChecklistItem(items[3]))
+        && (items.size() < 5 || validChecklistItem(items[4]))
+        && (items.size() < 6 || validChecklistItem(items[5]))
+        && (items.size() < 7 || validChecklistItem(items[6]));
+    }
+
+    function sameChecklistText(before, after) {
+      return after.size() == before.size()
+        && (after.size() < 1 || after[0].text == before[0].text)
+        && (after.size() < 2 || after[1].text == before[1].text)
+        && (after.size() < 3 || after[2].text == before[2].text)
+        && (after.size() < 4 || after[3].text == before[3].text)
+        && (after.size() < 5 || after[4].text == before[4].text)
+        && (after.size() < 6 || after[5].text == before[5].text)
+        && (after.size() < 7 || after[6].text == before[6].text);
+    }
+
+    function validMessage(data) {
+      return data.keys().hasOnly(['senderId', 'senderName', 'text', 'createdAt'])
+        && data.senderId is string
+        && data.senderId.size() > 0
+        && data.senderId.size() < 80
+        && data.senderName is string
+        && data.senderName.size() > 0
+        && data.senderName.size() < 40
+        && data.text is string
+        && data.text.size() > 0
+        && data.text.size() < 500
+        && data.createdAt is timestamp;
     }
 
     function validStoreItem(data) {
@@ -156,7 +203,39 @@ service cloud.firestore {
           && request.resource.data.status == 'pending_review'
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'proofSubmission'])
           && validSubmittedProof(request.resource.data.proofSubmission);
+        allow update: if isParent(familyId)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['checklist'])
+          && validChecklist(request.resource.data.checklist);
+        allow update: if isFamilyMember(familyId)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['checklist'])
+          && validChecklist(request.resource.data.checklist)
+          && sameChecklistText(resource.data.checklist, request.resource.data.checklist);
+        allow update: if isParent(familyId)
+          && resource.data.status == 'pending_review'
+          && request.resource.data.status == 'rework'
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status']);
+        allow update: if isFamilyMember(familyId)
+          && resource.data.isBounty == true
+          && resource.data.status == 'open'
+          && resource.data.assignedTo == null
+          && request.resource.data.status == 'in_progress'
+          && request.resource.data.isBounty == true
+          && request.resource.data.assignedTo is string
+          && request.resource.data.assignedTo.size() > 0
+          && request.resource.data.assignedTo.size() < 80
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'assignedTo']);
         allow delete: if false;
+
+        match /messages/{messageId} {
+          allow read: if isFamilyMember(familyId);
+          allow create: if isFamilyMember(familyId) && validMessage(request.resource.data);
+          allow update, delete: if isParent(familyId);
+        }
+      }
+
+      match /ledgerTransactions/{transactionId} {
+        allow read: if isFamilyMember(familyId);
+        allow write: if false;
       }
 
       match /storeItems/{itemId} {

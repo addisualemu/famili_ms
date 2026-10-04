@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { FamilyMember } from '../family/seedFamily.ts'
 import type { JuniorHome as JuniorHomeData } from './useJuniorHome.ts'
+import { OpenBountyList } from '../bounty/OpenBountyList.tsx'
 import { GoalBar } from './GoalBar.tsx'
 import { MissionCard } from './MissionCard.tsx'
 import { StarBadge } from './StarBadge.tsx'
@@ -44,6 +45,7 @@ export function JuniorHome({ familyId, member, home, onSwitch }: JuniorHomeProps
           <StarBadge stars={home.stars} />
           <GoalBar goal={home.goal} ready={home.ready} />
           <MissionList familyId={familyId} home={home} />
+          <OpenBountyList familyId={familyId} memberId={member.id} tall />
         </div>
       </main>
     </div>
