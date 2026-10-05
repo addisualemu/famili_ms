@@ -1,7 +1,8 @@
 import { signOut } from 'firebase/auth'
 import { useEffect, useRef, useState } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { ParentLogin } from './auth/ParentLogin.tsx'
+import { FinishFamily, finishFamily, ParentLogin } from './auth/ParentLogin.tsx'
+import { clearFinishRegistration, clearRegistrationError, peekRegistrationError, readFinishRegistration, registrationPending } from './auth/registrationGate.ts'
 import { useAuthUser } from './auth/useAuthUser.ts'
 import { auth } from './lib/firebase.ts'
 import { useFamily } from './family/useFamily.ts'
@@ -17,7 +18,7 @@ import { saveMemberPin } from './profile/saveMemberPin.ts'
 import { ProfileSwitcher } from './profile/ProfileSwitcher.tsx'
 
 function AuthGate() {
-  const { user, claims, error, ready } = useAuthUser()
+  const { user, claims, error, ready, reload } = useAuthUser()
   const parentName = user?.displayName || 'Parent'
   const family = useFamily(claims, parentName)
   const [activeId, setActiveId] = useState<string | null>(null)
@@ -26,6 +27,8 @@ function AuthGate() {
   const [pinBusy, setPinBusy] = useState(false)
   const [signingOut, setSigningOut] = useState(false)
   const [signOutError, setSignOutError] = useState<string | null>(null)
+  const [finishBusy, setFinishBusy] = useState(false)
+  const [finishError, setFinishError] = useState<string | null>(null)
   const restoredMember = useRef(false)
   const selected = family.members.find((member) => member.id === activeId) ?? null
   const juniorHome = useJuniorHome(claims?.familyId ?? null, selected)
@@ -39,12 +42,53 @@ function AuthGate() {
     }
   }, [claims, family.ready, family.members])
 
-  if (!ready || (claims && !family.ready)) {
+  if (!ready) {
+    return (
+      <main aria-busy="true" className="grid min-h-svh place-items-center bg-cream px-4 text-navy">
+        {registrationPending() ? <p className="text-sm">Creating your family…</p> : null}
+      </main>
+    )
+  }
+
+  if (claims && !family.ready) {
     return <main aria-busy="true" className="min-h-svh bg-cream" />
   }
 
   if (!user) {
     return <ParentLogin />
+  }
+
+  const passwordAccount = user.providerData.some((item) => item.providerId === 'password')
+  const unfinishedName = readFinishRegistration()
+  if (!claims && (passwordAccount || unfinishedName)) {
+    return (
+      <FinishFamily
+        busy={finishBusy}
+        error={finishError || peekRegistrationError() || error}
+        name={unfinishedName || user.displayName || 'Parent'}
+        onFinish={() => {
+          const name = unfinishedName || user.displayName || 'Parent'
+          setFinishBusy(true)
+          setFinishError(null)
+          void finishFamily(name)
+            .then(async () => {
+              await user.getIdToken(true)
+              clearFinishRegistration()
+              clearRegistrationError()
+              reload()
+            })
+            .catch((finishFailure: unknown) => {
+              setFinishError(finishFailure instanceof Error ? finishFailure.message : 'Could not create the family. Try again.')
+            })
+            .finally(() => setFinishBusy(false))
+        }}
+        onSignOut={() => {
+          clearFinishRegistration()
+          clearRegistrationError()
+          void handleSignOut()
+        }}
+      />
+    )
   }
 
   const active = selected

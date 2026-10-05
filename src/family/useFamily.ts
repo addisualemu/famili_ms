@@ -4,7 +4,6 @@ import type { ParentClaims } from '../auth/claims.ts'
 import { db } from '../lib/firebase.ts'
 import { ensureFamily, memberFromSnapshot, type FamilyMember } from './seedFamily.ts'
 
-const ORDER = ['member_parent', 'member_leo', 'member_maya']
 
 export function useFamily(claims: ParentClaims | null, parentName: string) {
   const [members, setMembers] = useState<FamilyMember[]>([])
@@ -31,7 +30,10 @@ export function useFamily(claims: ParentClaims | null, parentName: string) {
         const next = snapshot.docs.map((item) =>
           memberFromSnapshot(item.id, item.data() as Record<string, unknown>),
         )
-        next.sort((a, b) => ORDER.indexOf(a.id) - ORDER.indexOf(b.id))
+        next.sort((a, b) => {
+          if (a.role !== b.role) return a.role === 'parent' ? -1 : 1
+          return a.name.localeCompare(b.name)
+        })
         setMembers(next)
         setReady(true)
       },

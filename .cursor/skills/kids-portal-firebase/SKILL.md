@@ -11,7 +11,8 @@ Canonical field shapes: [schema.md](schema.md). Architecture prose: `Technical_a
 
 ## Auth and profiles
 
-- Parent signs in with email/password (or OAuth). Custom claims: `{ role: 'parent', familyId }`. The client reads those claims from the ID token. It does not call a function to set them.
+- Parent signs in with email/password (or OAuth). Custom claims: `{ role: 'parent', familyId }`. The client reads those claims from the ID token.
+- A new parent can create an email and password in the app. `registerParent` creates that one family and sets claims for the signed-in user only. No other function sets claims.
 - Children are **not** Firebase Auth users. They are `families/{familyId}/members/{memberId}` docs.
 - Active child id lives in client state (`localStorage` or memory).
 - Senior/parent screens: 4-digit PIN, salted hash on the member/parent record. Junior PIN may be null.

@@ -37,7 +37,8 @@ Shared family tablets and phones require a parent-controlled master account comb
 ### 2.1 Parent Authentication
 
 * **Provider:** Standard Firebase Auth (`EmailAuthProvider` or OAuth).
-* **Custom Claims:** `{ role: 'parent', familyId: '<FAMILY_UID>' }` on the parent Auth user. The client reads the ID token. Do not set claims with a Cloud Function.
+* **Custom Claims:** `{ role: 'parent', familyId: '<FAMILY_UID>' }` on the parent Auth user. The client reads the ID token.
+* **Registration:** A new parent creates an email and password in the app. `registerParent` creates that parent's family and parent member, then sets claims for that user only. The client refreshes the ID token. No other function sets claims.
 
 ### 2.2 Child Profile Switcher (Shared Device Session)
 

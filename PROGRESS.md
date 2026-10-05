@@ -128,6 +128,8 @@ Done when: SHP-01 and SHP-02 pass. SHP-03 custom buys stay out.
 - [x] **M6-05** Parent fulfillment queue with Fulfill / Deliver
 - [ ] **M6-06** Browser-verify catalog, blocked CTA, redeem, and fulfill
 - [x] **M6-07** Marketplace cards show a store item photo
+- [ ] **M6-08** Parent can add, edit, and remove child profiles
+- [x] **M6-09** Parent can create an email and password account
 
 ---
 
@@ -262,3 +264,11 @@ Phase status: `locked` (do not start until M6 is `done`)
 | 2026-10-04 | M5-04 | done — Approve calls `approveWorkOrder`, which credits Stars and completes the work order |
 | 2026-10-04 | M5-10 | started — Parent Console puts create, review, existing work, fulfillment, and the store on one page |
 | 2026-10-04 | M5-10 | done — Parent Console opens one place at a time: Approval Queue, Create, Work Orders, Fulfillment, Family Store |
+| 2026-10-04 | M6-08 | started — parent Profiles for add, edit, and remove |
+| 2026-10-04 | M6-08 | waiting — Profiles is in the console. Rules that let a parent edit a profile which already has Stars are not released (403 for addisudamena49@gmail.com). This browser is on the sign-in screen; Google popups are blocked. |
+| 2026-10-04 | M6-08 | paused — registration requested before Profiles is verified |
+| 2026-10-04 | M6-09 | started — Create account for a parent email and password |
+| 2026-10-04 | M6-09 | blocked — Create account is on the sign-in screen. `registerParent` did not deploy: addisudamena49@gmail.com lacks Service Account User on mini-portal-7f320. Test sign-in portal.register.check.20261004@example.com was created and has no family yet. |
+| 2026-10-04 | M6-09 | still blocked — localhost preflight to registerParent returns 404, which the browser reports as CORS. Deploy still needs iam.serviceAccounts.actAs. |
+| 2026-10-04 | M6-09 | resumed — WSL discovery of functions on /mnt/c exceeds the 10s default |
+| 2026-10-04 | M6-09 | done — registerParent is deployed and public. A new email parent reaches Choose a profile. |

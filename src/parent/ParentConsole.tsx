@@ -6,6 +6,7 @@ import { approveWorkOrder } from './approveWorkOrder.ts'
 import { CreateWorkOrderForm } from './CreateWorkOrderForm.tsx'
 import { FulfillmentQueue } from './FulfillmentQueue.tsx'
 import { reworkWorkOrder } from './reworkWorkOrder.ts'
+import { Profiles } from './Profiles.tsx'
 import { StoreInventory } from './StoreInventory.tsx'
 import { usePurchaseOrders } from './usePurchaseOrders.ts'
 
@@ -18,7 +19,7 @@ type ParentConsoleProps = {
   signingOut: boolean
 }
 
-type Place = 'queue' | 'create' | 'orders' | 'fulfillment' | 'store'
+type Place = 'queue' | 'create' | 'orders' | 'fulfillment' | 'store' | 'profiles'
 type OrderFilter = 'all' | SeniorWorkOrder['status']
 
 const PLACES: { id: Place; label: string }[] = [
@@ -27,6 +28,7 @@ const PLACES: { id: Place; label: string }[] = [
   { id: 'orders', label: 'Work Orders' },
   { id: 'fulfillment', label: 'Fulfillment' },
   { id: 'store', label: 'Family Store' },
+  { id: 'profiles', label: 'Profiles' },
 ]
 
 const FILTERS: { id: OrderFilter; label: string }[] = [
@@ -184,6 +186,7 @@ export function ParentConsole({ familyId, member, members, onSwitch, onSignOut, 
 
         {place === 'fulfillment' ? <FulfillmentQueue familyId={familyId} members={members} /> : null}
         {place === 'store' ? <StoreInventory familyId={familyId} /> : null}
+        {place === 'profiles' ? <Profiles familyId={familyId} members={members} /> : null}
       </main>
     </div>
   )

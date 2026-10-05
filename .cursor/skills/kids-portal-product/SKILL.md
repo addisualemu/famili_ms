@@ -21,7 +21,7 @@ Acceptance tables: [acceptance.md](acceptance.md).
 | Junior child | ~5–8, `tier: junior` | Claim/see today’s missions, one-tap photo done, watch one goal fill up |
 | Senior child | 9+, `tier: senior` | Accept work orders, checklists, task thread, Spend/Save/Give, catalog + custom buy request |
 
-PIN / profile switcher: avatar picker on shared devices. Junior may have no PIN. Senior and parent use a 4-digit PIN. Parent also has email/password.
+PIN / profile switcher: avatar picker on shared devices. Junior may have no PIN. Senior and parent use a 4-digit PIN. Parent also has email/password. A new parent creates that email and password in the app; each account has one family.
 
 ## Modules
 

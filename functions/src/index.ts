@@ -1,3 +1,4 @@
+import { getAuth } from 'firebase-admin/auth'
 import { initializeApp } from 'firebase-admin/app'
 import { FieldValue, getFirestore, type QueryDocumentSnapshot, type Timestamp } from 'firebase-admin/firestore'
 import { HttpsError, onCall } from 'firebase-functions/v2/https'
@@ -141,6 +142,52 @@ export const redeemStoreItem = onCall({ region: 'us-central1' }, async (request)
   if (failure) throw new HttpsError(failure.code, failure.message)
   return { orderId: orderRef.id }
 })
+
+export const registerParent = onCall({ region: 'us-central1', invoker: 'public' }, async (request) => {
+  const uid = request.auth?.uid
+  if (!uid || uid.length > 128 || uid.includes('/')) {
+    throw new HttpsError('unauthenticated', 'Sign in first.')
+  }
+
+  const name = readParentName(request.data?.name)
+  if (!name) throw new HttpsError('invalid-argument', 'Enter your name.')
+
+  const user = await getAuth().getUser(uid)
+  const claims = user.customClaims ?? {}
+  const existingFamily = claims.familyId
+  if (claims.role === 'parent' && typeof existingFamily === 'string' && existingFamily.length > 0) {
+    return { familyId: existingFamily }
+  }
+
+  const familyId = `family_${uid}`
+  const familyRef = db.collection('families').doc(familyId)
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(familyRef)
+    if (snap.exists) return
+    tx.set(familyRef, {
+      familyName: `${name} Family`.slice(0, 79),
+      createdAt: FieldValue.serverTimestamp(),
+      currencyName: 'Stars',
+      starToRealCurrencyRate: 0.05,
+    })
+    tx.set(familyRef.collection('members').doc('member_parent'), {
+      name,
+      role: 'parent',
+      avatarUrl: '',
+      pinHash: null,
+    })
+  })
+
+  await getAuth().setCustomUserClaims(uid, { role: 'parent', familyId })
+  return { familyId }
+})
+
+function readParentName(value: unknown) {
+  if (typeof value !== 'string') return null
+  const name = value.trim().replace(/\s+/g, ' ')
+  if (name.length < 1 || name.length > 39 || /[\u0000-\u001F]/.test(name)) return null
+  return name
+}
 
 function parentFamilyId(auth: { token: Record<string, unknown> } | undefined) {
   const familyId = auth?.token.familyId

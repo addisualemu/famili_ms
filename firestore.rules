@@ -36,10 +36,8 @@ service cloud.firestore {
         );
     }
 
-    function validMember(data) {
+    function memberCore(data) {
       return data.keys().hasAll(['name', 'role', 'avatarUrl', 'pinHash'])
-        && data.keys().hasOnly(['name', 'role', 'tier', 'avatarUrl', 'pinHash', 'allocationConfig', 'currentGoalItemId'])
-        && !data.keys().hasAny(['balance'])
         && data.name is string
         && data.name.size() > 0
         && data.name.size() < 40
@@ -53,6 +51,17 @@ service cloud.firestore {
           (data.role == 'parent' && !data.keys().hasAny(['tier', 'allocationConfig', 'currentGoalItemId']))
           || (data.role == 'child' && data.tier in ['junior', 'senior'])
         );
+    }
+
+    function validMember(data) {
+      return memberCore(data)
+        && data.keys().hasOnly(['name', 'role', 'tier', 'avatarUrl', 'pinHash', 'allocationConfig', 'currentGoalItemId'])
+        && !data.keys().hasAny(['balance']);
+    }
+
+    function validMemberUpdate(data) {
+      return memberCore(data)
+        && data.keys().hasOnly(['name', 'role', 'tier', 'avatarUrl', 'pinHash', 'allocationConfig', 'currentGoalItemId', 'balance']);
     }
 
     function validProof(data) {
@@ -212,9 +221,10 @@ service cloud.firestore {
         allow read: if isFamilyMember(familyId);
         allow create: if isParent(familyId) && validMember(request.resource.data);
         allow update: if isParent(familyId)
-          && validMember(request.resource.data)
+          && validMemberUpdate(request.resource.data)
+          && request.resource.data.role == resource.data.role
           && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['balance']);
-        allow delete: if isParent(familyId);
+        allow delete: if isParent(familyId) && resource.data.role == 'child';
       }
 
       match /workOrders/{workOrderId} {
