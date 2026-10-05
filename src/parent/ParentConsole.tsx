@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FamilyMember } from '../family/seedFamily.ts'
 import { useFamilyWorkOrders } from '../senior/useSeniorWorkOrders.ts'
 import type { SeniorWorkOrder } from '../senior/workOrders.ts'
+import { approveWorkOrder } from './approveWorkOrder.ts'
 import { CreateWorkOrderForm } from './CreateWorkOrderForm.tsx'
 import { FulfillmentQueue } from './FulfillmentQueue.tsx'
 import { reworkWorkOrder } from './reworkWorkOrder.ts'
@@ -51,7 +52,7 @@ export function ParentConsole({ familyId, member, members, onSwitch, onSignOut, 
       <main className="mx-auto grid w-full max-w-5xl gap-8 px-4 py-6 sm:px-8 lg:grid-cols-2 lg:py-8">
         <section aria-busy={!workOrders.ready}>
           <h2 className="text-xs font-semibold tracking-[0.16em] uppercase">Approval Queue</h2>
-          <p className="mt-2 text-sm text-navy/70">Rework sends a work order back. Star payout is unavailable on this device.</p>
+          <p className="mt-2 text-sm text-navy/70">Approve pays Stars. Rework sends a work order back.</p>
           {workOrders.ready && queue.length === 0 ? <p className="mt-4 text-base text-navy/70">Nothing to review.</p> : null}
           <ul className="mt-4 grid gap-4">
             {queue.map((order) => (
@@ -114,6 +115,18 @@ function ApprovalRow({
   const [error, setError] = useState<string | null>(null)
   const photo = order.photoUrls[0]
 
+  async function onApprove() {
+    setBusy(true)
+    setError(null)
+    try {
+      await approveWorkOrder(order.id)
+    } catch (failure) {
+      setError(failure instanceof Error ? failure.message : 'Could not approve that work order.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
   async function onRework() {
     setBusy(true)
     setError(null)
@@ -145,11 +158,19 @@ function ApprovalRow({
         </div>
       </div>
       <div className="mt-4 flex gap-3">
-        <button className="min-h-11 flex-1 rounded-2xl bg-green text-sm font-semibold text-white opacity-60" disabled type="button">
-          Approve
+        <button
+          className="min-h-11 flex-1 rounded-2xl bg-green text-sm font-semibold text-white disabled:opacity-60"
+          disabled={busy}
+          onClick={() => {
+            void onApprove()
+          }}
+          type="button"
+        >
+          {busy && !open ? 'Approving…' : 'Approve'}
         </button>
         <button
-          className="min-h-11 flex-1 rounded-2xl border border-navy/15 text-sm font-semibold"
+          className="min-h-11 flex-1 rounded-2xl border border-navy/15 text-sm font-semibold disabled:opacity-60"
+          disabled={busy}
           onClick={() => setOpen((value) => !value)}
           type="button"
         >

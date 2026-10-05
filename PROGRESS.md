@@ -5,9 +5,9 @@ Source of work for every agent turn. Do not implement anything that is not a tas
 ## Current
 
 - Phase: `M6`
-- Active: `none`
+- Active: none
 - Updated: `2026-10-04`
-- Plan: Blaze. `redeemStoreItem` may debit Stars. The client still cannot write `balance` or `ledgerTransactions`.
+- Plan: Blaze. `approveWorkOrder` pays Stars and `redeemStoreItem` debits them. The client still cannot write `balance` or `ledgerTransactions`.
 
 Statuses: `[ ]` todo · `[~]` in progress (at most one) · `[x]` done · `[-]` blocked
 
@@ -98,14 +98,14 @@ Done when: senior can toggle a checklist, comment on the work order, and submit.
 
 Phase status: `in progress`
 
-Spark plan. Do not implement approve or redeem as Cloud Functions.
+Approve pays Stars through `approveWorkOrder`. The client still cannot write `balance`.
 
 Done when: Approve pays Stars atomically; Rework returns the order with a note. Client still cannot write `balance`.
 
 - [x] **M5-01** Build Parent Console layout (approval queue + manage)
 - [x] **M5-02** Render pending_review submissions with photo thumbs
 - [x] **M5-03** Build create-work-order form (WO-01, including open bounty)
-- [-] **M5-04** Implement approve so it pays Stars without Cloud Functions
+- [x] **M5-04** Implement approve so `approveWorkOrder` pays Stars
 - [x] **M5-05** Implement Rework (note required, status `rework`)
 - [-] **M5-06** Implement redeem so it debits Spend without Cloud Functions
 - [x] **M5-07** Ship Firestore + Storage rules (ledger write = false)
@@ -257,3 +257,5 @@ Phase status: `locked` (do not start until M6 is `done`)
 | 2026-10-04 | M6-06 | waiting — catalog check needs a signed-in child; redeem and fulfill cannot be clicked until a Spend debit exists |
 | 2026-10-04 | M6-04 | resumed — project is on the Blaze plan, so redeem can run as a callable |
 | 2026-10-04 | M6-04 | done — Get this calls redeemStoreItem, which debits Spend, writes the ledger, and opens a purchase order |
+| 2026-10-04 | M5-04 | started — Approve was disabled; Blaze callable can pay Stars |
+| 2026-10-04 | M5-04 | done — Approve calls `approveWorkOrder`, which credits Stars and completes the work order |

@@ -6,12 +6,64 @@ initializeApp()
 
 const db = getFirestore()
 
+export const approveWorkOrder = onCall({ region: 'us-central1' }, async (request) => {
+  const familyId = parentFamilyId(request.auth)
+  const workOrderId = readId(request.data?.workOrderId)
+  if (!workOrderId) throw new HttpsError('invalid-argument', 'Choose a work order.')
+
+  const family = db.collection('families').doc(familyId)
+  const orderRef = family.collection('workOrders').doc(workOrderId)
+  const ledgerRef = family.collection('ledgerTransactions').doc()
+
+  const failure = await db.runTransaction(async (tx) => {
+    const orderSnap = await tx.get(orderRef)
+    if (!orderSnap.exists) return { code: 'not-found' as const, message: 'That work order is not in the family.' }
+    const order = orderSnap.data() ?? {}
+    if (order.status !== 'pending_review') return { code: 'failed-precondition' as const, message: 'That work order is not waiting for review.' }
+
+    const memberId = readId(order.assignedTo)
+    const stars = readInt(order.pointValue)
+    const title = typeof order.title === 'string' ? order.title : ''
+    if (!memberId || stars === null || stars < 0 || stars > 500 || title.length === 0) {
+      return { code: 'failed-precondition' as const, message: 'That work order cannot be approved.' }
+    }
+
+    const memberRef = family.collection('members').doc(memberId)
+    const memberSnap = await tx.get(memberRef)
+    if (!memberSnap.exists) return { code: 'not-found' as const, message: 'That child is not in the family.' }
+    const member = memberSnap.data() ?? {}
+    if (member.role !== 'child') return { code: 'permission-denied' as const, message: 'Stars can only be paid to a child.' }
+
+    const balance = readBalance(member.balance)
+    const split = splitStars(stars, member.allocationConfig)
+    tx.update(orderRef, { status: 'completed' })
+    tx.update(memberRef, {
+      balance: {
+        total: balance.total + stars,
+        spend: balance.spend + split.spend,
+        save: balance.save + split.save,
+        give: balance.give + split.give,
+      },
+    })
+    tx.set(ledgerRef, {
+      childId: memberId,
+      type: 'credit',
+      totalAmount: stars,
+      breakdown: split,
+      source: 'work_order',
+      referenceId: workOrderId,
+      memo: `Payout for: ${title}`.slice(0, 120),
+      createdAt: FieldValue.serverTimestamp(),
+    })
+    return null
+  })
+
+  if (failure) throw new HttpsError(failure.code, failure.message)
+  return { workOrderId }
+})
+
 export const redeemStoreItem = onCall({ region: 'us-central1' }, async (request) => {
-  const familyId = request.auth?.token.familyId
-  const role = request.auth?.token.role
-  if (!request.auth || role !== 'parent' || typeof familyId !== 'string' || familyId.length === 0) {
-    throw new HttpsError('permission-denied', 'Sign in as the parent to redeem.')
-  }
+  const familyId = parentFamilyId(request.auth)
 
   const memberId = readId(request.data?.memberId)
   const itemId = readId(request.data?.itemId)
@@ -90,12 +142,41 @@ export const redeemStoreItem = onCall({ region: 'us-central1' }, async (request)
   return { orderId: orderRef.id }
 })
 
+function parentFamilyId(auth: { token: Record<string, unknown> } | undefined) {
+  const familyId = auth?.token.familyId
+  const role = auth?.token.role
+  if (!auth || role !== 'parent' || typeof familyId !== 'string' || familyId.length === 0) {
+    throw new HttpsError('permission-denied', 'Sign in as the parent.')
+  }
+  return familyId
+}
+
 function readId(value: unknown) {
   return typeof value === 'string' && /^[A-Za-z0-9_-]{1,80}$/.test(value) ? value : null
 }
 
 function readInt(value: unknown) {
   return typeof value === 'number' && Number.isInteger(value) ? value : null
+}
+
+function splitStars(points: number, config: unknown) {
+  const allocation = config && typeof config === 'object' ? (config as Record<string, unknown>) : {}
+  const spendPct = readInt(allocation.spendPct)
+  const savePct = readInt(allocation.savePct)
+  const givePct = readInt(allocation.givePct)
+  const valid =
+    spendPct !== null &&
+    savePct !== null &&
+    givePct !== null &&
+    spendPct >= 0 &&
+    savePct >= 0 &&
+    givePct >= 0 &&
+    spendPct + savePct + givePct === 100
+  const spendShare = valid ? spendPct : 100
+  const saveShare = valid ? savePct : 0
+  const spend = Math.floor((points * spendShare) / 100)
+  const save = Math.floor((points * saveShare) / 100)
+  return { spend, save, give: points - spend - save }
 }
 
 function readBalance(value: unknown) {
