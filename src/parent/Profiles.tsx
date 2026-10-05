@@ -4,11 +4,16 @@ import { viewLabel } from '../profile/ProfileSwitcher.tsx'
 import {
   clearProfilePin,
   createChildProfile,
+  createParentProfile,
   removeChildProfile,
   renameProfile,
   updateChildProfile,
   type ChildTier,
 } from './saveMemberProfile.ts'
+
+type ProfileKind = ChildTier | 'parent'
+
+const FOUNDING_PARENT_ID = 'member_parent'
 
 type ProfilesProps = {
   familyId: string
@@ -20,7 +25,7 @@ export function Profiles({ familyId, members }: ProfilesProps) {
     <section>
       <h2 className="text-xs font-semibold tracking-[0.16em] uppercase">Profiles</h2>
       <p className="mt-2 text-sm text-navy/70">
-        Add a child, change a name or Junior or Senior view, or remove a child. The parent profile stays.
+        Add a child or another parent. A parent opens the Parent Console and can approve work, manage the store, and edit profiles. The first parent profile stays.
       </p>
       <AddProfileForm familyId={familyId} />
       <ul className="mt-4 grid gap-3">
@@ -36,7 +41,7 @@ export function Profiles({ familyId, members }: ProfilesProps) {
 
 function AddProfileForm({ familyId }: { familyId: string }) {
   const [name, setName] = useState('')
-  const [tier, setTier] = useState<ChildTier>('junior')
+  const [kind, setKind] = useState<ProfileKind>('junior')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [saved, setSaved] = useState(false)
@@ -47,9 +52,13 @@ function AddProfileForm({ familyId }: { familyId: string }) {
     setError(null)
     setSaved(false)
     try {
-      await createChildProfile(familyId, name, tier)
+      if (kind === 'parent') {
+        await createParentProfile(familyId, name)
+      } else {
+        await createChildProfile(familyId, name, kind)
+      }
       setName('')
-      setTier('junior')
+      setKind('junior')
       setSaved(true)
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : 'Could not add that profile.')
@@ -75,14 +84,19 @@ function AddProfileForm({ familyId }: { familyId: string }) {
         View
         <select
           className="min-h-11 rounded-2xl border border-navy/15 px-3"
-          onChange={(event) => setTier(event.target.value === 'senior' ? 'senior' : 'junior')}
-          value={tier}
+          onChange={(event) => setKind(readProfileKind(event.target.value))}
+          value={kind}
         >
           <option value="junior">Junior</option>
           <option value="senior">Senior</option>
+          <option value="parent">Parent</option>
         </select>
       </label>
-      <p className="text-sm text-navy/70">Junior sees Missions. Senior sees Work Orders and Spend, Save, and Give.</p>
+      <p className="text-sm text-navy/70">
+        {kind === 'parent'
+          ? 'A parent uses the Parent Console, the same as you, and sets a PIN on the profile picker.'
+          : 'Junior sees Missions. Senior sees Work Orders and Spend, Save, and Give.'}
+      </p>
       <button className="min-h-11 rounded-2xl bg-navy text-sm font-semibold text-cream disabled:opacity-60" disabled={busy} type="submit">
         {busy ? 'Adding…' : 'Add profile'}
       </button>
@@ -104,6 +118,7 @@ function ProfileCard({ familyId, member }: { familyId: string; member: FamilyMem
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const child = member.role === 'child'
+  const removableParent = member.role === 'parent' && member.id !== FOUNDING_PARENT_ID
 
   async function onSave(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -239,7 +254,7 @@ function ProfileCard({ familyId, member }: { familyId: string; member: FamilyMem
               Clear PIN
             </button>
           ) : null}
-          {child ? (
+          {child || removableParent ? (
             <button
               className="min-h-11 rounded-2xl border border-coral/40 px-4 text-sm font-semibold text-coral"
               onClick={() => {
@@ -257,7 +272,10 @@ function ProfileCard({ familyId, member }: { familyId: string; member: FamilyMem
 
       {confirming && !editing ? (
         <div className="mt-4 grid gap-3">
-          <p className="text-sm text-navy/70">Remove {member.name}? They leave the profile picker. Work orders stay in the family.</p>
+          <p className="text-sm text-navy/70">
+            Remove {member.name}? They leave the profile picker.
+            {child ? ' Work orders stay in the family.' : ' The first parent profile stays.'}
+          </p>
           <div className="flex gap-3">
             <button
               className="min-h-11 flex-1 rounded-2xl bg-coral text-sm font-semibold text-white disabled:opacity-60"
@@ -287,4 +305,9 @@ function ProfileCard({ familyId, member }: { familyId: string; member: FamilyMem
       ) : null}
     </article>
   )
+}
+
+function readProfileKind(value: string): ProfileKind {
+  if (value === 'senior' || value === 'parent') return value
+  return 'junior'
 }

@@ -225,6 +225,7 @@ service cloud.firestore {
           && request.resource.data.role == resource.data.role
           && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['balance']);
         allow delete: if isParent(familyId) && resource.data.role == 'child';
+        allow delete: if isParent(familyId) && resource.data.role == 'parent' && memberId != 'member_parent';
       }
 
       match /workOrders/{workOrderId} {

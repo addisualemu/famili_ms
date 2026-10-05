@@ -20,6 +20,15 @@ export async function createChildProfile(familyId: string, name: string, tier: C
   })
 }
 
+export async function createParentProfile(familyId: string, name: string) {
+  await addDoc(collection(db, 'families', familyId, 'members'), {
+    name: cleanName(name),
+    role: 'parent',
+    avatarUrl: '',
+    pinHash: null,
+  })
+}
+
 export async function renameProfile(familyId: string, memberId: string, name: string) {
   await updateDoc(doc(db, 'families', familyId, 'members', memberId), { name: cleanName(name) })
 }
