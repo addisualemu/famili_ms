@@ -23,6 +23,7 @@ firestore-debug.log
 ui-debug.log
 pubsub-debug.log
 functions/node_modules
+functions/lib
 
 # Editor directories and files
 .vscode/*

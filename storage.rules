@@ -1,15 +1,29 @@
 rules_version = '2';
 
-// Proof photos only. Other objects stay closed.
+// Family proof photos and store item photos. Other objects stay closed.
 service firebase.storage {
   match /b/{bucket}/o {
     function isFamilyMember(familyId) {
       return request.auth != null && request.auth.token.familyId == familyId;
     }
 
+    function isParent(familyId) {
+      return isFamilyMember(familyId) && request.auth.token.role == 'parent';
+    }
+
     match /families/{familyId}/proofs/{fileName} {
       allow read: if isFamilyMember(familyId);
       allow create: if isFamilyMember(familyId)
+        && fileName.size() > 0
+        && fileName.size() < 120
+        && request.resource.size < 10 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+      allow update, delete: if false;
+    }
+
+    match /families/{familyId}/store/{fileName} {
+      allow read: if isFamilyMember(familyId);
+      allow create: if isParent(familyId)
         && fileName.size() > 0
         && fileName.size() < 120
         && request.resource.size < 10 * 1024 * 1024

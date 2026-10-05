@@ -3,7 +3,9 @@ import type { FamilyMember } from '../family/seedFamily.ts'
 import { useFamilyWorkOrders } from '../senior/useSeniorWorkOrders.ts'
 import type { SeniorWorkOrder } from '../senior/workOrders.ts'
 import { CreateWorkOrderForm } from './CreateWorkOrderForm.tsx'
+import { FulfillmentQueue } from './FulfillmentQueue.tsx'
 import { reworkWorkOrder } from './reworkWorkOrder.ts'
+import { StoreInventory } from './StoreInventory.tsx'
 
 type ParentConsoleProps = {
   familyId: string
@@ -84,6 +86,12 @@ export function ParentConsole({ familyId, member, members, onSwitch, onSignOut, 
             </ul>
           ) : null}
         </section>
+        <div className="lg:col-span-2">
+          <FulfillmentQueue familyId={familyId} members={members} />
+        </div>
+        <div className="lg:col-span-2">
+          <StoreInventory familyId={familyId} />
+        </div>
       </main>
     </div>
   )

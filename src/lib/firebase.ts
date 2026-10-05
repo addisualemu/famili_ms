@@ -20,6 +20,7 @@ const firebaseApp = initializeApp({
   appId: requiredEnv('VITE_FIREBASE_APP_ID'),
 })
 
+export { firebaseApp }
 export const auth = getAuth(firebaseApp)
 export const db = getFirestore(firebaseApp)
 export const storage = getStorage(firebaseApp)

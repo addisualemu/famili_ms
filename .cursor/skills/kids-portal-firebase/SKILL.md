@@ -1,11 +1,11 @@
 ---
 name: kids-portal-firebase
-description: Kids Life OS Firebase architecture — Auth profile switcher, Firestore schema, security rules, and Storage proofs. Use when touching firebase.json, rules, members, work orders, ledger, or store data. The project is on the Spark plan.
+description: Kids Life OS Firebase architecture — Auth profile switcher, Firestore schema, security rules, and Storage proofs. Use when touching firebase.json, rules, members, work orders, ledger, or store data. The project is on the Blaze plan.
 ---
 
 # Kids Portal Firebase
 
-Stack: Firebase Auth + Firestore + Storage + Hosting on the Spark plan. Use the Firebase project from env. Do not use local emulators. Do not use Cloud Functions, Cloud Build, or any other Blaze-only product.
+Stack: Firebase Auth + Firestore + Storage + Hosting + Functions on the Blaze plan. Use the Firebase project from env. Do not use local emulators. A callable may credit or debit Stars. Do not add other paid products.
 
 Canonical field shapes: [schema.md](schema.md). Architecture prose: `Technical_architectur.md`.
 
@@ -42,7 +42,7 @@ Do not flatten these to root collections. Do not add parallel “users” or “
 | Work order create/delete | Parent |
 | Work order claim, checklist, submit proof | Family member |
 
-Do not add callable Cloud Functions for approve, redeem, or claims. Those products require the Blaze plan.
+Approve and redeem run as callables. Do not write `members.balance` or `ledgerTransactions` from the client.
 
 ## Security rules (intent)
 

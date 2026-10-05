@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { FamilyMember } from '../family/seedFamily.ts'
 import { OpenBountyList } from '../bounty/OpenBountyList.tsx'
+import { Marketplace } from '../store/Marketplace.tsx'
 import { AccountCard } from './AccountCard.tsx'
 import { submitProof } from './submitProof.ts'
 import { toggleChecklist } from './toggleChecklist.ts'
@@ -22,6 +23,7 @@ export function SeniorDashboard({ familyId, member, onSwitch }: SeniorDashboardP
   const [toggleError, setToggleError] = useState<string | null>(null)
   const [submittingId, setSubmittingId] = useState<string | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
+  const [storeOpen, setStoreOpen] = useState(false)
   const openOrder = workOrders.orders.find((order) => order.id === openId) ?? null
 
   async function onSubmit(orderId: string, status: (typeof workOrders.orders)[number]['status']) {
@@ -51,7 +53,7 @@ export function SeniorDashboard({ familyId, member, onSwitch }: SeniorDashboardP
   }
   return (
     <div className="flex min-h-svh flex-col bg-cream text-navy lg:flex-row">
-      <aside className="flex items-center gap-4 bg-navy px-5 py-5 text-cream lg:w-60 lg:flex-col lg:items-stretch lg:px-6 lg:py-8">
+      <aside className="flex flex-wrap items-center gap-4 bg-navy px-5 py-5 text-cream lg:w-60 lg:flex-col lg:items-stretch lg:px-6 lg:py-8">
         <div className="flex items-center gap-3 lg:flex-col lg:items-start">
           <span
             aria-hidden="true"
@@ -65,7 +67,20 @@ export function SeniorDashboard({ familyId, member, onSwitch }: SeniorDashboardP
           </div>
         </div>
         <p className="hidden text-sm font-semibold lg:mt-8 lg:block">Accounts</p>
-        <p className="hidden text-sm font-semibold lg:mt-4 lg:block">Work Orders</p>
+        <button
+          className="min-h-11 rounded-2xl border border-cream/20 px-4 text-sm font-semibold lg:mt-4"
+          onClick={() => setStoreOpen(false)}
+          type="button"
+        >
+          Work Orders
+        </button>
+        <button
+          className="min-h-11 rounded-2xl border border-cream/20 px-4 text-sm font-semibold lg:mt-3"
+          onClick={() => setStoreOpen(true)}
+          type="button"
+        >
+          Family Marketplace
+        </button>
         <button
           className="ml-auto min-h-11 rounded-2xl border border-cream/20 px-4 text-sm font-semibold lg:ml-0 lg:mt-auto"
           onClick={onSwitch}
@@ -76,6 +91,9 @@ export function SeniorDashboard({ familyId, member, onSwitch }: SeniorDashboardP
       </aside>
 
       <main className="flex-1 px-4 py-6 sm:px-8 lg:px-10 lg:py-8">
+        {storeOpen ? (
+          <Marketplace familyId={familyId} memberId={member.id} onBack={() => setStoreOpen(false)} spend={member.spend} />
+        ) : (
         <div className="mx-auto w-full max-w-3xl">
           <h1 className="text-2xl font-semibold tracking-tight">{member.name}&apos;s Dashboard</h1>
           <section className="mt-8">
@@ -155,6 +173,7 @@ export function SeniorDashboard({ familyId, member, onSwitch }: SeniorDashboardP
           </section>
           <OpenBountyList familyId={familyId} memberId={member.id} />
         </div>
+        )}
       </main>
     </div>
   )

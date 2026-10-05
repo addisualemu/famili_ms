@@ -162,7 +162,7 @@ service cloud.firestore {
     }
 
     function validStoreItem(data) {
-      return data.keys().hasOnly(['title', 'category', 'pointCost', 'icon', 'stock', 'cooldownHours', 'active'])
+      return data.keys().hasOnly(['title', 'category', 'pointCost', 'icon', 'stock', 'cooldownHours', 'active', 'imageUrl'])
         && data.title is string
         && data.title.size() > 0
         && data.title.size() < 80
@@ -178,7 +178,29 @@ service cloud.firestore {
         && data.cooldownHours is int
         && data.cooldownHours >= 0
         && data.cooldownHours <= 8760
-        && data.active is bool;
+        && data.active is bool
+        && (!data.keys().hasAny(['imageUrl'])
+          || (data.imageUrl is string && data.imageUrl.size() > 0 && data.imageUrl.size() < 2000 && data.imageUrl.matches('https://.*')));
+    }
+
+    function validPurchaseOrder(data) {
+      return data.keys().hasOnly(['childId', 'itemId', 'itemTitle', 'pointCost', 'status', 'requestedAt', 'fulfilledAt', 'deliveredAt'])
+        && data.childId is string
+        && data.childId.size() > 0
+        && data.childId.size() < 80
+        && data.itemId is string
+        && data.itemId.size() > 0
+        && data.itemId.size() < 80
+        && data.itemTitle is string
+        && data.itemTitle.size() > 0
+        && data.itemTitle.size() < 80
+        && data.pointCost is int
+        && data.pointCost >= 0
+        && data.pointCost <= 10000
+        && data.status == 'pending_fulfillment'
+        && data.requestedAt is timestamp
+        && data.fulfilledAt == null
+        && data.deliveredAt == null;
     }
 
     match /families/{familyId} {
@@ -241,7 +263,26 @@ service cloud.firestore {
       match /storeItems/{itemId} {
         allow read: if isFamilyMember(familyId);
         allow create: if isParent(familyId) && validStoreItem(request.resource.data);
-        allow update, delete: if false;
+        allow update: if isParent(familyId) && validStoreItem(request.resource.data);
+        allow delete: if false;
+      }
+
+      match /purchaseOrders/{orderId} {
+        allow read: if isFamilyMember(familyId);
+        allow create: if isFamilyMember(familyId) && validPurchaseOrder(request.resource.data);
+        allow update: if isParent(familyId)
+          && resource.data.status == 'pending_fulfillment'
+          && request.resource.data.status == 'fulfilled'
+          && request.resource.data.fulfilledAt is timestamp
+          && request.resource.data.deliveredAt == null
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'fulfilledAt']);
+        allow update: if isParent(familyId)
+          && resource.data.status == 'fulfilled'
+          && request.resource.data.status == 'fulfilled'
+          && resource.data.deliveredAt == null
+          && request.resource.data.deliveredAt is timestamp
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['deliveredAt']);
+        allow delete: if false;
       }
     }
   }

@@ -42,7 +42,7 @@ Project skills in `.cursor/skills/` hold the working rules. Load the matching sk
 - Vite + React + TypeScript + Tailwind CSS
 - PWA (installable on shared tablets)
 - Firebase: Auth, Firestore, Storage, Hosting
-- Spark plan only. Do not use Cloud Functions or any other Blaze-only product.
+- Blaze plan. A callable may credit or debit Stars. Do not add other paid products.
 - Firebase project config from env. Do not use the local Firebase emulators.
 - Do not write `members.balance` or `ledgerTransactions` from client code.
 
@@ -51,7 +51,7 @@ Do not switch to Next.js, a second database, or client-side balance writes.
 ## Hard rules
 
 1. **One milestone at a time.** Finish the current phase’s acceptance checks before starting the next. No store UI in Milestone 3.
-2. **Stars never move on the client.** Do not write `members.balance` or `ledgerTransactions` from client code. Do not add Cloud Functions.
+2. **Stars never move on the client.** Do not write `members.balance` or `ledgerTransactions` from client code. A callable does those writes.
 3. **Shared-device auth.** One parent Firebase Auth session per family device. Kids switch via profile picker + optional PIN. Do not create a Firebase Auth user per child.
 4. **Tier the UI, not the data.** Same collections for junior and senior. `members.tier` (`junior` \| `senior`) chooses presentation and which fields are shown.
 5. **Task-bound chat only.** No global kid chat. Messages live under `workOrders/{id}/messages`.

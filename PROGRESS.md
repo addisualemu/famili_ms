@@ -4,10 +4,10 @@ Source of work for every agent turn. Do not implement anything that is not a tas
 
 ## Current
 
-- Phase: `M4`
-- Active: `M5-05`
+- Phase: `M6`
+- Active: `none`
 - Updated: `2026-10-04`
-- Plan: Spark only. Do not use Cloud Functions or any other Blaze-only product.
+- Plan: Blaze. `redeemStoreItem` may debit Stars. The client still cannot write `balance` or `ledgerTransactions`.
 
 Statuses: `[ ]` todo · `[~]` in progress (at most one) · `[x]` done · `[-]` blocked
 
@@ -104,27 +104,29 @@ Done when: Approve pays Stars atomically; Rework returns the order with a note. 
 
 - [x] **M5-01** Build Parent Console layout (approval queue + manage)
 - [x] **M5-02** Render pending_review submissions with photo thumbs
-- [-] **M5-03** Build create-work-order form (WO-01, including open bounty)
+- [x] **M5-03** Build create-work-order form (WO-01, including open bounty)
 - [-] **M5-04** Implement approve so it pays Stars without Cloud Functions
-- [~] **M5-05** Implement Rework (note required, status `rework`)
+- [x] **M5-05** Implement Rework (note required, status `rework`)
 - [-] **M5-06** Implement redeem so it debits Spend without Cloud Functions
-- [-] **M5-07** Ship Firestore + Storage rules (ledger write = false)
+- [x] **M5-07** Ship Firestore + Storage rules (ledger write = false)
 - [ ] **M5-08** Browser-verify approve credits Stars and rework returns the mission
+- [x] **M5-09** Rework leaves `pending_review` and does not show Pending review
 
 ---
 
 ## M6 — Family Store & Redemption Flow
 
-Phase status: `todo`
+Phase status: `in progress`
 
 Done when: SHP-01 and SHP-02 pass. SHP-03 custom buys stay out.
 
-- [ ] **M6-01** Parent can create/edit store items (stock, cooldown, active)
-- [ ] **M6-02** Build marketplace grid by category
-- [ ] **M6-03** CTA states: Get this vs Need N more Stars
-- [ ] **M6-04** Child redeem calls `redeemStoreItem` (Spend debit + purchase order)
-- [ ] **M6-05** Parent fulfillment queue with Fulfill / Deliver
+- [x] **M6-01** Parent can create/edit store items (stock, cooldown, active)
+- [x] **M6-02** Build marketplace grid by category
+- [x] **M6-03** CTA states: Get this vs Need N more Stars
+- [x] **M6-04** Child redeem calls `redeemStoreItem` (Spend debit + purchase order)
+- [x] **M6-05** Parent fulfillment queue with Fulfill / Deliver
 - [ ] **M6-06** Browser-verify catalog, blocked CTA, redeem, and fulfill
+- [x] **M6-07** Marketplace cards show a store item photo
 
 ---
 
@@ -230,3 +232,28 @@ Phase status: `locked` (do not start until M6 is `done`)
 | 2026-10-04 | M5-05 | the work order card shows a Rework mark and the note, before View |
 | 2026-10-04 | M5-06 | blocked — debiting Spend has the same Stars restriction as approve |
 | 2026-10-04 | M5-07 | blocked — rules file includes rework, bounty claim, and ledger write false; deploy returned 403 |
+| 2026-10-04 | M5-07 | done — actclearapp@gmail.com released firestore.rules and storage.rules to mini-portal-7f320 |
+| 2026-10-04 | M5-05 | rules are live; a Rework click can now set status to rework |
+| 2026-10-04 | M5-05 | waiting — local app is on Google sign-in; Rework click still needs the parent session |
+| 2026-10-04 | M5-05 | done — a note is required; rules allow the parent to set status to rework and still deny ledger writes |
+| 2026-10-04 | M5-03 | done — create form assigns a child or an open bounty; rules allow both creates |
+| 2026-10-04 | M4-07 | started |
+| 2026-10-04 | M4-07 | waiting — senior dashboard check needs the parent Google session; the sign-in page is still open |
+| 2026-10-04 | M5-09 | started — a sent-back work order still shows Pending review |
+| 2026-10-04 | M5-09 | done — WO-104 status is rework; the detail shows Submit again instead of Pending review |
+| 2026-10-04 | M5-03 | rules deploy blocker cleared; create still needs a successful parent save |
+| 2026-10-04 | M6-01 | started |
+| 2026-10-04 | M6-01 | done — Parent Console Family Store can create an item and save stock, cooldown, and active; store update rule released |
+| 2026-10-04 | M6-02 | started |
+| 2026-10-04 | M6-02 | done — junior and senior open Family Marketplace grouped into Privileges, Outings, Physical, and External |
+| 2026-10-04 | M6-03 | started |
+| 2026-10-04 | M6-03 | done — marketplace button is Get this when Spend covers the price, otherwise Need N more Stars and disabled |
+| 2026-10-04 | M6-04 | blocked — redeem must debit Spend and write a ledger line, and the client cannot do either |
+| 2026-10-04 | M6-07 | started |
+| 2026-10-04 | M6-07 | done — parent can add a store photo; the marketplace card shows that image |
+| 2026-10-04 | M6-05 | started |
+| 2026-10-04 | M6-05 | done — Parent Console has a Fulfillment Queue with Fulfill, then Deliver |
+| 2026-10-04 | M6-06 | started |
+| 2026-10-04 | M6-06 | waiting — catalog check needs a signed-in child; redeem and fulfill cannot be clicked until a Spend debit exists |
+| 2026-10-04 | M6-04 | resumed — project is on the Blaze plan, so redeem can run as a callable |
+| 2026-10-04 | M6-04 | done — Get this calls redeemStoreItem, which debits Spend, writes the ledger, and opens a purchase order |

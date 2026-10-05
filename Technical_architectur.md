@@ -10,7 +10,7 @@
 * **Identity & Access:** Firebase Authentication (Parent email/password + custom token / PIN-based child profiles).
 * **Primary Database:** Cloud Firestore (NoSQL document-based, real-time listeners for live task and balance syncing).
 * **File Storage:** Cloud Storage for Firebase (optimized for chore proof photos and avatar uploads).
-* **Plan:** Spark only. Do not use Cloud Functions, Cloud Build, or any other Blaze-only product.
+* **Plan:** Blaze. Callables may credit or debit Stars. Do not write balances from the client.
 * **Backend Logic & Security:** Firestore security rules. Parent custom claims are read from the ID token. Balances are not written from the client.
 
 ---
@@ -285,9 +285,7 @@ service firebase.storage {
 
 ## 6. Ledger integrity
 
-Do not implement this section with Cloud Functions. The project stays on the Spark plan.
-
-Star disbursements and redemptions must stay consistent. Do not write `members.balance` or `ledgerTransactions` from the client.
+Star disbursements and redemptions run in a callable so they stay consistent. Do not write `members.balance` or `ledgerTransactions` from the client.
 
 ### 6.1 `approveWorkOrder` (Callable Function)
 

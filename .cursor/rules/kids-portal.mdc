@@ -7,7 +7,7 @@ alwaysApply: true
 
 - Before any implementation, read `PROGRESS.md` and claim one task id. Do not start work that is not on the board.
 - After any implementation, update that task’s checkbox, `Active`, `Updated`, and Log in `PROGRESS.md`.
-- Stack is Vite + React + TypeScript + Tailwind + Firebase (Auth, Firestore, Storage, Hosting) + PWA. Spark plan only. Do not use Cloud Functions or any other Blaze-only product.
+- Stack is Vite + React + TypeScript + Tailwind + Firebase (Auth, Firestore, Storage, Hosting, Functions) + PWA. The project is on the Blaze plan. Use a callable only for Star debits and credits.
 - Build only the current phase in `PROGRESS.md`. Do not implement later modules “while you are here.”
 - Never write `members.balance` or `ledgerTransactions` from client code.
 - One parent Firebase Auth session per device. Children are `members` documents, switched locally, with an optional 4-digit PIN for senior/parent.
