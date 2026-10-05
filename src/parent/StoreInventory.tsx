@@ -12,7 +12,7 @@ export function StoreInventory({ familyId }: StoreInventoryProps) {
   const store = useStoreItems(familyId)
 
   return (
-    <section aria-busy={!store.ready} className="mt-8">
+    <section aria-busy={!store.ready}>
       <h2 className="text-xs font-semibold tracking-[0.16em] uppercase">Family Store</h2>
       <p className="mt-2 text-sm text-navy/70">Photo, stock, cooldown, and whether an item is active.</p>
       <CreateStoreItemForm familyId={familyId} />

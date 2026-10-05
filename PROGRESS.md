@@ -111,6 +111,7 @@ Done when: Approve pays Stars atomically; Rework returns the order with a note. 
 - [x] **M5-07** Ship Firestore + Storage rules (ledger write = false)
 - [ ] **M5-08** Browser-verify approve credits Stars and rework returns the mission
 - [x] **M5-09** Rework leaves `pending_review` and does not show Pending review
+- [x] **M5-10** Split Parent Console into Approval Queue, Create, Work Orders, Fulfillment, and Family Store
 
 ---
 
@@ -259,3 +260,5 @@ Phase status: `locked` (do not start until M6 is `done`)
 | 2026-10-04 | M6-04 | done — Get this calls redeemStoreItem, which debits Spend, writes the ledger, and opens a purchase order |
 | 2026-10-04 | M5-04 | started — Approve was disabled; Blaze callable can pay Stars |
 | 2026-10-04 | M5-04 | done — Approve calls `approveWorkOrder`, which credits Stars and completes the work order |
+| 2026-10-04 | M5-10 | started — Parent Console puts create, review, existing work, fulfillment, and the store on one page |
+| 2026-10-04 | M5-10 | done — Parent Console opens one place at a time: Approval Queue, Create, Work Orders, Fulfillment, Family Store |
