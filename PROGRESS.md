@@ -132,6 +132,7 @@ Done when: SHP-01 and SHP-02 pass. SHP-03 custom buys stay out.
 - [x] **M6-09** Parent can create an email and password account
 - [x] **M6-10** Google sign-in can create a parent family
 - [x] **M6-11** Profile add can create another parent with the same Parent Console
+- [x] **M6-12** Shared tablet lists junior and senior only; parent profiles open at `/parent` with no link from that screen
 
 ---
 
@@ -278,3 +279,5 @@ Phase status: `locked` (do not start until M6 is `done`)
 | 2026-10-05 | M6-10 | done — a signed-in account with no parent claims sees Create your family, including Google |
 | 2026-10-05 | M6-11 | started — Profiles can add another parent with the same Parent Console |
 | 2026-10-05 | M6-11 | done — Add profile View includes Parent. That profile opens the Parent Console. The first parent profile cannot be removed. |
+| 2026-10-05 | M6-12 | started — shared tablet should list junior and senior only; parent profiles move to their own path |
+| 2026-10-05 | M6-12 | done — `/` lists junior and senior only. Parent profiles are at `/parent`, with no link from the shared tablet. Signed-in browser check stopped on Google sign-in (popups blocked). |

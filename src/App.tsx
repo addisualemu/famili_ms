@@ -1,6 +1,6 @@
 import { signOut } from 'firebase/auth'
 import { useEffect, useRef, useState } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import { FinishFamily, finishFamily, ParentLogin } from './auth/ParentLogin.tsx'
 import { clearFinishRegistration, clearRegistrationError, readFinishRegistration, registrationPending } from './auth/registrationGate.ts'
 import { useAuthUser } from './auth/useAuthUser.ts'
@@ -15,9 +15,11 @@ import { ActiveProfile } from './profile/ActiveProfile.tsx'
 import { PinLock } from './profile/PinLock.tsx'
 import { hashPin, requiresPin, verifyPin } from './profile/pinHash.ts'
 import { saveMemberPin } from './profile/saveMemberPin.ts'
-import { ProfileSwitcher } from './profile/ProfileSwitcher.tsx'
+import { memberOnAudience, ProfileSwitcher, type ProfileAudience } from './profile/ProfileSwitcher.tsx'
 
 function AuthGate() {
+  const location = useLocation()
+  const audience: ProfileAudience = isParentPath(location.pathname) ? 'parents' : 'children'
   const { user, claims, error, ready, reload } = useAuthUser()
   const parentName = user?.displayName || 'Parent'
   const family = useFamily(claims, parentName)
@@ -29,18 +31,21 @@ function AuthGate() {
   const [signOutError, setSignOutError] = useState<string | null>(null)
   const [finishBusy, setFinishBusy] = useState(false)
   const [finishError, setFinishError] = useState<string | null>(null)
-  const restoredMember = useRef(false)
+  const restoredAudience = useRef<string | null>(null)
   const selected = family.members.find((member) => member.id === activeId) ?? null
   const juniorHome = useJuniorHome(claims?.familyId ?? null, selected)
 
   useEffect(() => {
-    if (!claims || !family.ready || family.members.length === 0 || restoredMember.current) return
-    restoredMember.current = true
+    if (!claims || !family.ready || family.members.length === 0) return
+    const key = `${claims.familyId}:${audience}`
+    if (restoredAudience.current === key) return
+    restoredAudience.current = key
+    setPendingId(null)
+    setPinError(null)
     const saved = readActiveMember(claims.familyId)
-    if (saved && family.members.some((member) => member.id === saved)) {
-      setActiveId(saved)
-    }
-  }, [claims, family.ready, family.members])
+    const savedMember = saved ? family.members.find((member) => member.id === saved) : undefined
+    setActiveId(savedMember && memberOnAudience(savedMember, audience) ? savedMember.id : null)
+  }, [audience, claims, family.ready, family.members])
 
   if (!ready) {
     return (
@@ -90,13 +95,14 @@ function AuthGate() {
     )
   }
 
-  const active = selected
-  const pending = family.members.find((member) => member.id === pendingId) ?? null
+  const active = selected && memberOnAudience(selected, audience) ? selected : null
+  const pendingMember = family.members.find((member) => member.id === pendingId) ?? null
+  const pending = pendingMember && memberOnAudience(pendingMember, audience) ? pendingMember : null
   const sessionError = error || family.error || signOutError || juniorHome.error
 
   function selectProfile(memberId: string) {
     const member = family.members.find((item) => item.id === memberId)
-    if (!member) return
+    if (!member || !memberOnAudience(member, audience)) return
     if (requiresPin(member)) {
       setPinError(null)
       setPendingId(memberId)
@@ -165,6 +171,7 @@ function AuthGate() {
     return (
       <>
         <ProfileSwitcher
+          audience={audience}
           members={family.members}
           onSelect={selectProfile}
           onSignOut={handleSignOut}
@@ -230,12 +237,19 @@ function SessionError({ message }: { message: string }) {
   )
 }
 
+function isParentPath(pathname: string) {
+  return pathname === '/parent' || pathname === '/parent/'
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<AuthGate />} />
-        <Route path="/login" element={<AuthGate />} />
+        <Route element={<AuthGate />}>
+          <Route path="/" />
+          <Route path="/login" />
+          <Route path="/parent" />
+        </Route>
       </Routes>
     </BrowserRouter>
   )
