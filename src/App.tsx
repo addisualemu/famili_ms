@@ -2,7 +2,7 @@ import { signOut } from 'firebase/auth'
 import { useEffect, useRef, useState } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { FinishFamily, finishFamily, ParentLogin } from './auth/ParentLogin.tsx'
-import { clearFinishRegistration, clearRegistrationError, peekRegistrationError, readFinishRegistration, registrationPending } from './auth/registrationGate.ts'
+import { clearFinishRegistration, clearRegistrationError, readFinishRegistration, registrationPending } from './auth/registrationGate.ts'
 import { useAuthUser } from './auth/useAuthUser.ts'
 import { auth } from './lib/firebase.ts'
 import { useFamily } from './family/useFamily.ts'
@@ -58,13 +58,12 @@ function AuthGate() {
     return <ParentLogin />
   }
 
-  const passwordAccount = user.providerData.some((item) => item.providerId === 'password')
   const unfinishedName = readFinishRegistration()
-  if (!claims && (passwordAccount || unfinishedName)) {
+  if (!claims) {
     return (
       <FinishFamily
         busy={finishBusy}
-        error={finishError || peekRegistrationError() || error}
+        error={finishError}
         name={unfinishedName || user.displayName || 'Parent'}
         onFinish={() => {
           const name = unfinishedName || user.displayName || 'Parent'

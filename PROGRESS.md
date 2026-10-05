@@ -6,7 +6,7 @@ Source of work for every agent turn. Do not implement anything that is not a tas
 
 - Phase: `M6`
 - Active: none
-- Updated: `2026-10-04`
+- Updated: `2026-10-05`
 - Plan: Blaze. `approveWorkOrder` pays Stars and `redeemStoreItem` debits them. The client still cannot write `balance` or `ledgerTransactions`.
 
 Statuses: `[ ]` todo · `[~]` in progress (at most one) · `[x]` done · `[-]` blocked
@@ -130,6 +130,7 @@ Done when: SHP-01 and SHP-02 pass. SHP-03 custom buys stay out.
 - [x] **M6-07** Marketplace cards show a store item photo
 - [ ] **M6-08** Parent can add, edit, and remove child profiles
 - [x] **M6-09** Parent can create an email and password account
+- [x] **M6-10** Google sign-in can create a parent family
 
 ---
 
@@ -272,3 +273,5 @@ Phase status: `locked` (do not start until M6 is `done`)
 | 2026-10-04 | M6-09 | still blocked — localhost preflight to registerParent returns 404, which the browser reports as CORS. Deploy still needs iam.serviceAccounts.actAs. |
 | 2026-10-04 | M6-09 | resumed — WSL discovery of functions on /mnt/c exceeds the 10s default |
 | 2026-10-04 | M6-09 | done — registerParent is deployed and public. A new email parent reaches Choose a profile. |
+| 2026-10-05 | M6-10 | started — Google sign-in with no family gets Create my family |
+| 2026-10-05 | M6-10 | done — a signed-in account with no parent claims sees Create your family, including Google |

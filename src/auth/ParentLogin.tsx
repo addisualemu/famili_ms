@@ -236,9 +236,9 @@ export function FinishFamily({
     <main className="flex min-h-svh items-center justify-center bg-cream px-4 py-10 text-navy">
       <section className="w-full max-w-md rounded-3xl border border-navy/10 bg-white px-6 py-8 sm:px-8">
         <p className="text-xs font-semibold tracking-[0.2em] uppercase">Parent Console</p>
-        <h1 className="mt-2 text-2xl font-semibold">Finish your family</h1>
+        <h1 className="mt-2 text-2xl font-semibold">Create your family</h1>
         <p className="mt-2 text-sm leading-6 text-navy/70">
-          {name} is signed in, and the family still needs to be created.
+          {name} is signed in. Create the family for this parent account.
         </p>
         {error ? (
           <p className="mt-4 text-sm text-coral" role="alert">
